@@ -1,0 +1,306 @@
+<div class="clinic-homepage">
+  
+  <!-- Theme Selector -->
+  <div class="theme-selector">
+    <p class="theme-label">Theme</p>
+    <div class="theme-buttons">
+      <button 
+        *ngFor="let theme of ['blue', 'green', 'purple', 'orange']"
+        (click)="changeTheme(theme)"
+        [class.active]="activeTheme === theme"
+        [ngClass]="'theme-btn-' + theme">
+      </button>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-content">
+      <div class="logo">ClinicExpert</div>
+      <div class="nav-links">
+        <a href="#home">Home</a>
+        <a href="#plans">Plans</a>
+        <a href="#login">Login</a>
+        <a href="#trial" class="btn-trial">Free Trial</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero/Overview Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-left">
+          <h1 class="hero-title">AI-Driven Appointment Optimization for your Clinic</h1>
+          <p class="hero-description">
+            Optimize your practice, enhance patient care, and streamline clinic operations—all in one software solution.
+          </p>
+          <button class="btn-primary">
+            <i data-feather="play-circle"></i>
+            Free Trial
+          </button>
+        </div>
+        <div class="hero-right">
+          <div class="doctor-image-container">
+            <img src="assets/Images/main.jfif" alt="Doctor" class="doctor-image">
+            <div class="circle-decoration circle-1"></div>
+            <div class="circle-decoration circle-2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="container">
+      <h2 class="section-title">Features</h2>
+      
+      <!-- Feature 1 -->
+      <div class="feature-row">
+        <div class="feature-image-container">
+          <img src="assets/Images/FeatureOne.jfif" alt="Appointment Scheduling" class="feature-img">
+          <div class="feature-icon-badge">
+            <i data-feather="calendar"></i>
+          </div>
+        </div>
+        <div class="feature-content">
+          <div class="feature-icon-circle">
+            <i data-feather="calendar"></i>
+          </div>
+          <h3 class="feature-heading">Appointment Scheduling</h3>
+          <p class="feature-text">Effortlessly manage patient appointments with our intelligent scheduling system. Automated reminders, conflict detection, and easy rescheduling ensure smooth operations.</p>
+          <ul class="feature-list">
+            <li><i data-feather="check"></i> Smart calendar management</li>
+            <li><i data-feather="check"></i> Automated SMS & email reminders</li>
+            <li><i data-feather="check"></i> Online booking portal</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="feature-row reverse">
+        <div class="feature-content">
+          <div class="feature-icon-circle">
+            <i data-feather="file-text"></i>
+          </div>
+          <h3 class="feature-heading">Electronic Health Records</h3>
+          <p class="feature-text">Maintain comprehensive digital patient records with complete medical history, prescriptions, lab reports, and treatment plans—all in one secure location.</p>
+          <ul class="feature-list">
+            <li><i data-feather="check"></i> Complete patient history</li>
+            <li><i data-feather="check"></i> Digital prescriptions</li>
+            <li><i data-feather="check"></i> Secure document storage</li>
+          </ul>
+        </div>
+        <div class="feature-image-container">
+          <img src="assets/Images/FeatureTwo.jfif" alt="Electronic Health Records" class="feature-img">
+          <div class="feature-icon-badge">
+            <i data-feather="file-text"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="feature-row">
+        <div class="feature-image-container">
+          <img src="assets/Images/FeattureThree.jfif" alt="Billing & Invoicing" class="feature-img">
+          <div class="feature-icon-badge">
+            <i data-feather="dollar-sign"></i>
+          </div>
+        </div>
+        <div class="feature-content">
+          <div class="feature-icon-circle">
+            <i data-feather="dollar-sign"></i>
+          </div>
+          <h3 class="feature-heading">Billing & Invoicing</h3>
+          <p class="feature-text">Automated billing and payment tracking system that simplifies financial management. Generate invoices, track payments, and manage insurance claims effortlessly.</p>
+          <ul class="feature-list">
+            <li><i data-feather="check"></i> Automated invoice generation</li>
+            <li><i data-feather="check"></i> Multiple payment methods</li>
+            <li><i data-feather="check"></i> Insurance claim management</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="feature-row reverse">
+        <div class="feature-content">
+          <div class="feature-icon-circle">
+            <i data-feather="package"></i>
+          </div>
+          <h3 class="feature-heading">Inventory Management</h3>
+          <p class="feature-text">Track medical supplies, equipment, and medications with real-time inventory monitoring. Get alerts for low stock and manage supplier information efficiently.</p>
+          <ul class="feature-list">
+            <li><i data-feather="check"></i> Real-time stock tracking</li>
+            <li><i data-feather="check"></i> Low stock alerts</li>
+            <li><i data-feather="check"></i> Supplier management</li>
+          </ul>
+        </div>
+        <div class="feature-image-container">
+          <img src="assets/Images/FeatureFour.jfif" alt="Inventory Management" class="feature-img">
+          <div class="feature-icon-badge">
+            <i data-feather="package"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 5 -->
+      <div class="feature-row">
+        <div class="feature-image-container">
+          <img src="assets/Images/FeatureFive.jfif" alt="Patient Communication" class="feature-img">
+          <div class="feature-icon-badge">
+            <i data-feather="message-square"></i>
+          </div>
+        </div>
+        <div class="feature-content">
+          <div class="feature-icon-circle">
+            <i data-feather="message-square"></i>
+          </div>
+          <h3 class="feature-heading">Patient Communication</h3>
+          <p class="feature-text">Stay connected with patients through SMS and email notifications. Send appointment reminders, health tips, and important updates seamlessly.</p>
+          <ul class="feature-list">
+            <li><i data-feather="check"></i> SMS & email notifications</li>
+            <li><i data-feather="check"></i> Broadcast messages</li>
+            <li><i data-feather="check"></i> Patient portal access</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Feature 6 -->
+      <div class="feature-row reverse">
+        <div class="feature-content">
+          <div class="feature-icon-circle">
+            <i data-feather="bar-chart"></i>
+          </div>
+          <h3 class="feature-heading">Analytics & Reporting</h3>
+          <p class="feature-text">Make data-driven decisions with comprehensive analytics and reporting. Track patient trends, revenue, and operational efficiency with interactive dashboards.</p>
+          <ul class="feature-list">
+            <li><i data-feather="check"></i> Interactive dashboards</li>
+            <li><i data-feather="check"></i> Custom reports</li>
+            <li><i data-feather="check"></i> Performance metrics</li>
+          </ul>
+        </div>
+        <div class="feature-image-container">
+          <img src="assets/Images/FeatureSix.jfif" alt="Analytics & Reporting" class="feature-img">
+          <div class="feature-icon-badge">
+            <i data-feather="bar-chart"></i>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Benefits Section -->
+  <section class="benefits-section">
+    <div class="container">
+      <h2 class="section-title">How You Would Benefit</h2>
+      <div class="benefits-grid">
+        <div class="benefit-card" *ngFor="let benefit of benefits">
+          <div class="benefit-icon">
+            <i [attr.data-feather]="benefit.icon"></i>
+          </div>
+          <h3 class="benefit-title">{{ benefit.title }}</h3>
+          <p class="benefit-desc">{{ benefit.desc }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Us Section -->
+  <section class="why-choose-section">
+    <div class="container">
+      <h2 class="section-title">Why Choose Us</h2>
+      
+      <div class="why-choose-container">
+        <div class="why-choose-image-side">
+          <img src="assets/Images/WhyOne.jfif" alt="Why Choose Us" class="why-choose-img">
+          <div class="why-choose-badge">
+            <div class="badge-icon">
+              <i data-feather="award"></i>
+            </div>
+            <div class="badge-text">
+              <h4>Trusted by</h4>
+              <p>500+ Clinics</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="why-choose-content-side">
+          <div class="why-choose-item">
+            <div class="why-item-icon">
+              <i data-feather="users"></i>
+            </div>
+            <div class="why-item-content">
+              <h3>Multi-Doctor and Multi-Location Management</h3>
+              <p>Seamlessly manage multiple doctors across different clinic locations with centralized control and real-time synchronization.</p>
+            </div>
+          </div>
+
+          <div class="why-choose-item">
+            <div class="why-item-icon">
+              <i data-feather="zap"></i>
+            </div>
+            <div class="why-item-content">
+              <h3>Easy to Use</h3>
+              <p>Intuitive interface designed for healthcare professionals. No technical expertise required—start using it from day one.</p>
+            </div>
+          </div>
+
+          <div class="why-choose-item">
+            <div class="why-item-icon">
+              <i data-feather="headphones"></i>
+            </div>
+            <div class="why-item-content">
+              <h3>Assistive Approach</h3>
+              <p>24/7 dedicated support team ready to assist you. Personalized training and onboarding to ensure smooth implementation.</p>
+            </div>
+          </div>
+
+          <div class="why-choose-item">
+            <div class="why-item-icon">
+              <i data-feather="shield"></i>
+            </div>
+            <div class="why-item-content">
+              <h3>Data Privacy</h3>
+              <p>Bank-level encryption and HIPAA compliant security measures. Your patient data is protected with industry-leading security protocols.</p>
+            </div>
+          </div>
+
+          <div class="why-choose-item">
+            <div class="why-item-icon">
+              <i data-feather="gift"></i>
+            </div>
+            <div class="why-item-content">
+              <h3>30 Days Free</h3>
+              <p>Try all premium features free for 30 days. No credit card required. Cancel anytime with no questions asked.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="container text-center">
+      <h2 class="cta-title">Join Us on Our Mission</h2>
+      <p class="cta-description">
+        Ready to make clinic management easy? Let us take care of the administrative work so you can focus on 
+        delivering exceptional healthcare. Contact us today to learn more or start your journey with a free trial.
+      </p>
+      <div class="cta-buttons">
+        <button class="btn-primary">Start Free Trial</button>
+        <button class="btn-secondary">Contact Us</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container text-center">
+      <p>&copy; 2025 ClinicExpert. All rights reserved.</p>
+    </div>
+  </footer>
+
+</div>

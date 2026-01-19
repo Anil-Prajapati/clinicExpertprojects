@@ -11,6 +11,7 @@ import { Component, Inject } from '@angular/core';
 export class HomeComponent {
   constructor(@Inject(DOCUMENT) private doc: Document) {}
   activeTheme: string = 'blue';
+  showTheme = false;
 
   themes: Record<string, { primary: string; gradient: string; light: string }> =
     {
@@ -41,6 +42,14 @@ export class HomeComponent {
     this.doc.documentElement.style.setProperty('--gradient-bg',this.themes[theme].gradient);
     this.doc.documentElement.style.setProperty('--light-bg',this.themes[theme].light);
   }
+  toggleTheme() {
+  this.showTheme = !this.showTheme; // open/close via icon
+}
+
+selectTheme(theme: string) {
+  this.changeTheme(theme); // tumhara existing code
+  this.showTheme = false;  // select ke baad auto close
+}
   ngOnInit(): void {
     this.changeTheme(this.activeTheme);
   }

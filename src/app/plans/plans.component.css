@@ -1,0 +1,330 @@
+:root {
+    --primary-blue: #2563eb;
+    --basic-purple: #7c3aed;
+    --standard-yellow: #facc15;
+    --premium-cyan: #06b6d4;
+    --bg-light: #f9fafb;
+    --text-main: #111827;
+    --text-muted: #6b7280;
+    --white: #ffffff;
+}
+
+/* Page Layout */
+.pricing-page {
+    padding: 60px 20px;
+    background-color: var(--bg-light);
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--text-main);
+}
+
+/* Header & Toggles */
+.pricing-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    margin-bottom: 50px;
+}
+
+.user-toggle-pill {
+    background: #e2e8f0;
+    padding: 4px;
+    border-radius: 12px;
+    display: flex;
+}
+
+.user-toggle-pill button {
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    color: var(--text-muted);
+    background: transparent;
+}
+
+.user-toggle-pill button.active {
+    background: var(--primary-blue);
+    color: var(--white);
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+}
+
+/* Duration Nav */
+.nav-inner {
+    border: 1px solid #d1d5db;
+    border-radius: 50px;
+    padding: 4px;
+    display: flex;
+    background: var(--white);
+}
+
+.nav-inner button {
+    border: none;
+    background: none;
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text-muted);
+}
+
+.nav-inner button.active {
+    background: #e2e8f0;
+    color: var(--text-main);
+}
+
+.save-tag {
+    background: #10b981;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 4px;
+}
+
+/* Grid Layout */
+.pricing-grid {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+/* Plan Cards */
+.plan-card {
+    background: var(--white);
+    border: 2px solid #e5e7eb;
+    border-radius: 24px;
+    padding: 40px 30px;
+    width: 360px;
+    display: flex;
+    flex-direction: column;
+    transition: 0.4s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+.plan-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    border-color: var(--primary-blue);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
+}
+
+.plan-card.basic {
+    border: 2px solid var(--basic-purple);
+}
+
+.plan-card.standard {
+    border: 2px solid var(--standard-yellow);
+}
+
+.plan-card.premium {
+    border: 2px solid var(--premium-cyan);
+}
+
+
+.plan-card.featured {
+    border: 3px solid var(--standard-yellow);
+    transform: scale(1.03);
+}
+
+.plan-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
+}
+
+.plan-card.basic {
+    border: 2px solid var(--basic-purple);
+    background: linear-gradient(135deg, #f5f3ff, #ffffff);
+}
+
+.plan-card.standard {
+    border: 2px solid var(--standard-yellow);
+    background: linear-gradient(135deg, #fffde7, #ffffff);
+}
+
+.plan-card.premium {
+    border: 2px solid var(--premium-cyan);
+    background: linear-gradient(135deg, #ecfeff, #ffffff);
+}
+
+.plan-card.featured {
+    transform: scale(1.03);
+}
+
+/* Recommended Label */
+.recommended-label {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, var(--standard-yellow), #f59e0b);
+    color: #111827;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 18px;
+    border-radius: 999px;
+    box-shadow: 0 2px 6px rgba(250, 204, 21, 0.4);
+}
+
+/* Typography */
+.plan-name {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.plan-subtitle {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+.price-display {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.amount {
+    font-size: 40px;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.currency,
+.cycle {
+    font-size: 16px;
+    color: var(--text-muted);
+}
+
+/* Credit Badge */
+.credit-badge {
+    background: #f0fdf4;
+    color: #166534;
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.credit-badge.highlight {
+    background: #fffbeb;
+    color: #92400e;
+}
+
+/* Team Users */
+.team-section p {
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.user-counter {
+    background: #f8fafc;
+    padding: 12px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+}
+
+.user-counter input {
+    width: 60px;
+    padding: 6px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    text-align: center;
+}
+
+/* Features */
+.feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 30px 0;
+    flex-grow: 1;
+    text-align: left;
+}
+
+.feature-list li {
+    font-size: 14px;
+    margin-bottom: 12px;
+    color: var(--text-main);
+    position: relative;
+    padding-left: 24px;
+}
+
+.feature-list li::before {
+    content: '✔';
+    position: absolute;
+    left: 0;
+    color: var(--primary-blue);
+    font-weight: bold;
+}
+
+/* Buttons */
+.btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-basic {
+    background: linear-gradient(90deg, var(--basic-purple), #9333ea);
+    color: white;
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+.btn-standard {
+    background: linear-gradient(90deg, var(--standard-yellow), #f59e0b);
+    color: white;
+    box-shadow: 0 4px 12px rgba(250, 204, 21, 0.3);
+}
+
+.btn-premium {
+    background: linear-gradient(90deg, var(--premium-cyan), #0ea5e9);
+    color: white;
+    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+}
+
+/* Footer */
+.pricing-footer {
+    margin-top: 60px;
+    text-align: center;
+}
+
+.info-box {
+    background: #f1f5f9;
+    padding: 20px;
+    border-radius: 16px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.secondary-text {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 8px;
+}
+
+.btn-comparison {
+    margin-top: 25px;
+    background: none;
+    border: 1px solid #cbd5e1;
+    padding: 10px 24px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 500;
+}

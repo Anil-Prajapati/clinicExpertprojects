@@ -1,26 +1,27 @@
 <div class="clinic-homepage">
   
   <!-- Theme Selector -->
-  <div class="theme-selector">
-    <p class="theme-label">Theme</p>
-    <div class="theme-buttons">
-      <button 
-        *ngFor="let theme of ['blue', 'green', 'purple', 'orange']"
-        (click)="changeTheme(theme)"
-        [class.active]="activeTheme === theme"
-        [ngClass]="'theme-btn-' + theme">
-      </button>
-    </div>
+  <div class="theme-selector" *ngIf="showTheme">
+  <p class="theme-label">Theme</p>
+  <div class="theme-buttons">
+    <button 
+      *ngFor="let theme of ['blue', 'green', 'purple', 'orange']"
+      (click)="selectTheme(theme)"
+      [class.active]="activeTheme === theme"
+      [ngClass]="'theme-btn-' + theme">
+    </button>
   </div>
+</div>
 
   <!-- Navbar -->
   <nav class="navbar">
     <div class="nav-content">
-      <div class="logo">ClinicExpert</div>
+      <div class="logo"><img src="assets/Images/logo.png" alt="Appointment Scheduling" class="logo-png"> ClinicExpert</div>
       <div class="nav-links">
         <a href="#home">Home</a>
-        <a href="#plans">Plans</a>
-        <a href="#login">Login</a>
+        <a href="/plans">Plans</a>
+        <a href="/login">Login</a>
+        <button class="theme-toggle-btn" (click)="toggleTheme()">🎨</button>
         <a href="#trial" class="btn-trial">Free Trial</a>
       </div>
     </div>
@@ -55,7 +56,7 @@
   <section class="features-section">
     <div class="container">
       <h2 class="section-title">Features</h2>
-      
+    
       <!-- Feature 1 -->
       <div class="feature-row">
         <div class="feature-image-container">
@@ -81,7 +82,13 @@
       <!-- Feature 2 -->
       <div class="feature-row reverse">
         <div class="feature-content">
-          <div class="feature-icon-circle">
+          <img src="assets/Images/FeatureTwo.jfif" alt="Electronic Health Records" class="feature-img">
+          <div class="feature-icon-badge">
+            <i data-feather="file-text"></i>
+          </div>
+        </div>
+        <div class="feature-image-container">
+           <div class="feature-icon-circle">
             <i data-feather="file-text"></i>
           </div>
           <h3 class="feature-heading">Electronic Health Records</h3>
@@ -91,12 +98,7 @@
             <li><i data-feather="check"></i> Digital prescriptions</li>
             <li><i data-feather="check"></i> Secure document storage</li>
           </ul>
-        </div>
-        <div class="feature-image-container">
-          <img src="assets/Images/FeatureTwo.jfif" alt="Electronic Health Records" class="feature-img">
-          <div class="feature-icon-badge">
-            <i data-feather="file-text"></i>
-          </div>
+
         </div>
       </div>
 
@@ -125,7 +127,13 @@
       <!-- Feature 4 -->
       <div class="feature-row reverse">
         <div class="feature-content">
-          <div class="feature-icon-circle">
+          <img src="assets/Images/FeatureFour.jfif" alt="Inventory Management" class="feature-img">
+          <div class="feature-icon-badge">
+            <i data-feather="package"></i>
+          </div>
+        </div>
+        <div class="feature-image-container">
+           <div class="feature-icon-circle">
             <i data-feather="package"></i>
           </div>
           <h3 class="feature-heading">Inventory Management</h3>
@@ -135,12 +143,8 @@
             <li><i data-feather="check"></i> Low stock alerts</li>
             <li><i data-feather="check"></i> Supplier management</li>
           </ul>
-        </div>
-        <div class="feature-image-container">
-          <img src="assets/Images/FeatureFour.jfif" alt="Inventory Management" class="feature-img">
-          <div class="feature-icon-badge">
-            <i data-feather="package"></i>
-          </div>
+          
+          
         </div>
       </div>
 
@@ -169,6 +173,13 @@
       <!-- Feature 6 -->
       <div class="feature-row reverse">
         <div class="feature-content">
+           <img src="assets/Images/FeatureSix.jfif" alt="Analytics & Reporting" class="feature-img">
+          <div class="feature-icon-badge">
+            <i data-feather="bar-chart"></i>
+          </div>
+        </div>
+        <div class="feature-image-container">
+
           <div class="feature-icon-circle">
             <i data-feather="bar-chart"></i>
           </div>
@@ -179,12 +190,7 @@
             <li><i data-feather="check"></i> Custom reports</li>
             <li><i data-feather="check"></i> Performance metrics</li>
           </ul>
-        </div>
-        <div class="feature-image-container">
-          <img src="assets/Images/FeatureSix.jfif" alt="Analytics & Reporting" class="feature-img">
-          <div class="feature-icon-badge">
-            <i data-feather="bar-chart"></i>
-          </div>
+         
         </div>
       </div>
 
@@ -193,19 +199,76 @@
 
   <!-- Benefits Section -->
   <section class="benefits-section">
-    <div class="container">
-      <h2 class="section-title">How You Would Benefit</h2>
-      <div class="benefits-grid">
-        <div class="benefit-card" *ngFor="let benefit of benefits">
-          <div class="benefit-icon">
-            <i [attr.data-feather]="benefit.icon"></i>
-          </div>
-          <h3 class="benefit-title">{{ benefit.title }}</h3>
-          <p class="benefit-desc">{{ benefit.desc }}</p>
+  <div class="container">
+    <h2 class="section-title">How You Would Benefit</h2>
+    
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="card-image">
+          <img src="assets/Images/BenefitOne.avif" alt="Save Time">
+          <div class="card-badge"><i data-feather="clock"></i></div>
+        </div>
+        <div class="card-content">
+          <h3 class="benefit-heading">Save Time & Increase Efficiency</h3>
+          <p class="benefit-text">Streamline workflows to spend less time on admin tasks and more time caring for patients.</p>
+          <ul class="benefit-list">
+            <li><i data-feather="check-circle"></i> Automated scheduling</li>
+            <li><i data-feather="check-circle"></i> Quick check-in</li>
+            <li><i data-feather="check-circle"></i> Instant reports</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="benefit-card">
+        <div class="card-image">
+          <img src="assets/Images/BenefitTwo.avif" alt="Patient Care">
+          <div class="card-badge"><i data-feather="heart"></i></div>
+        </div>
+        <div class="card-content">
+          <h3 class="benefit-heading">Enhance Patient Care</h3>
+          <p class="benefit-text">Maintain comprehensive health records and optimize scheduling for a personalized experience.</p>
+          <ul class="benefit-list">
+            <li><i data-feather="check-circle"></i> Medical history access</li>
+            <li><i data-feather="check-circle"></i> Treatment plans</li>
+            <li><i data-feather="check-circle"></i> Better engagement</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="benefit-card">
+        <div class="card-image">
+          <img src="assets/Images/BenefitThree.avif" alt="Secure">
+          <div class="card-badge"><i data-feather="shield"></i></div>
+        </div>
+        <div class="card-content">
+          <h3 class="benefit-heading">Secure & Compliant</h3>
+          <p class="benefit-text">Our software is fully compliant with data protection regulations, ensuring patient data is safe.</p>
+          <ul class="benefit-list">
+            <li><i data-feather="check-circle"></i> HIPAA compliant</li>
+            <li><i data-feather="check-circle"></i> End-to-end encryption</li>
+            <li><i data-feather="check-circle"></i> Security audits</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="benefit-card">
+        <div class="card-image">
+          <img src="assets/Images/BenefitFour.webp" alt="Scalable">
+          <div class="card-badge"><i data-feather="users"></i></div>
+        </div>
+        <div class="card-content">
+          <h3 class="benefit-heading">Adaptable for All Sizes</h3>
+          <p class="benefit-text">Whether solo or multi-specialty, our software is built to scale and grow with your practice.</p>
+          <ul class="benefit-list">
+            <li><i data-feather="check-circle"></i> Scalable architecture</li>
+            <li><i data-feather="check-circle"></i> Custom workflows</li>
+            <li><i data-feather="check-circle"></i> Multi-location support</li>
+          </ul>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
   <!-- Why Choose Us Section -->
   <section class="why-choose-section">
@@ -214,7 +277,7 @@
       
       <div class="why-choose-container">
         <div class="why-choose-image-side">
-          <img src="assets/Images/WhyOne.jfif" alt="Why Choose Us" class="why-choose-img">
+          <img src="https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=600&h=700&fit=crop" alt="Why Choose Us" class="why-choose-img">
           <div class="why-choose-badge">
             <div class="badge-icon">
               <i data-feather="award"></i>

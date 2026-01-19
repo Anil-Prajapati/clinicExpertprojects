@@ -1,0 +1,363 @@
+<div class="admin-dashboard">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">
+        <i class="bi bi-heart-pulse-fill"></i>
+      </div>
+      <button class="menu-toggle">
+        <i class="bi bi-list"></i>
+      </button>
+      <div class="search-box">
+        <input type="text" placeholder="Search" [(ngModel)]="searchText">
+        <i class="bi bi-search"></i>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="icon-btn">
+        <i class="bi bi-arrows-fullscreen"></i>
+      </button>
+      <button class="icon-btn">
+        <i class="bi bi-bell"></i>
+      </button>
+      <button class="icon-btn">
+        <i class="bi bi-gear"></i>
+      </button>
+      <div class="admin-profile">
+        <span class="admin-label">ADMIN</span>
+        <div class="admin-avatar"></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="main-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="emergency-help">
+        <i class="bi bi-mic-fill"></i>
+        <div>
+          <div class="emergency-title">Emergency</div>
+          <div class="emergency-subtitle">help</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-item active">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard</span>
+          <i class="bi bi-chevron-down ms-auto"></i>
+        </div>
+        <div class="nav-subitems">
+          <div class="nav-subitem"><span>Dashboard 1</span></div>
+          <div class="nav-subitem"><span>Dashboard 2</span></div>
+          <div class="nav-subitem"><span>Dashboard 3</span></div>
+          <div class="nav-subitem"><span>Dashboard 4</span></div>
+        </div>
+
+        <div class="nav-item">
+          <i class="bi bi-calendar-check"></i>
+          <span>Appointments</span>
+        </div>
+
+        <div class="nav-item">
+          <i class="bi bi-people"></i>
+          <span>Patients</span>
+          <i class="bi bi-chevron-right ms-auto"></i>
+        </div>
+
+        <div class="nav-item">
+          <i class="bi bi-heart-pulse"></i>
+          <span>Doctors</span>
+          <i class="bi bi-chevron-right ms-auto"></i>
+        </div>
+
+        <div class="nav-item">
+          <i class="bi bi-box"></i>
+          <span>Features</span>
+          <i class="bi bi-chevron-right ms-auto"></i>
+        </div>
+
+        <div class="nav-item">
+          <i class="bi bi-table"></i>
+          <span>Forms, Tables & Charts</span>
+          <i class="bi bi-chevron-right ms-auto"></i>
+        </div>
+
+        <div class="nav-item">
+          <i class="bi bi-grid-3x3"></i>
+          <span>Apps & Widgets</span>
+          <i class="bi bi-chevron-right ms-auto"></i>
+        </div>
+
+        <div class="nav-item">
+          <i class="bi bi-lock"></i>
+          <span>Authentication</span>
+          <i class="bi bi-chevron-right ms-auto"></i>
+        </div>
+
+        <div class="nav-item">
+          <i class="bi bi-triangle"></i>
+          <span>Miscellaneous</span>
+          <i class="bi bi-chevron-right ms-auto"></i>
+        </div>
+      </nav>
+
+      <div class="appointment-card">
+        <div class="appointment-illustration">
+          <i class="bi bi-person-circle"></i>
+          <i class="bi bi-chat-dots-fill"></i>
+        </div>
+        <div class="appointment-text">
+          <div class="appointment-title">Make an Appointments</div>
+          <div class="appointment-subtitle">Best Health Care here <i class="bi bi-arrow-right"></i></div>
+        </div>
+      </div>
+
+      <div class="footer-text">Rhythm Admin Dashboard</div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="content-grid">
+        <!-- Left Column -->
+        <div class="left-column">
+          <!-- Stats Cards -->
+          <div class="stats-cards">
+            <div class="stat-card" *ngFor="let card of statCards">
+              <div class="stat-icon" [class]="'stat-icon-' + card.title.toLowerCase().replace(' ', '-')">
+                <i [class]="'bi bi-' + card.icon"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-title">{{ card.title }}</div>
+                <div class="stat-value">{{ card.value }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Daily Revenue Report -->
+          <div class="card revenue-card">
+            <div class="card-header">
+              <h3>Daily Revenue Report</h3>
+            </div>
+            <div class="card-body">
+              <div class="revenue-amount">
+                <span class="current">{{ dailyRevenue.current }}</span>
+                <span class="previous">{{ dailyRevenue.previous }}</span>
+              </div>
+              <div class="chart-container">
+                <div class="chart-y-axis">
+                  <span>120</span>
+                  <span>90</span>
+                  <span>60</span>
+                  <span>30</span>
+                  <span>0</span>
+                </div>
+                <div class="chart-bars">
+                  <div class="bar-group" *ngFor="let data of revenueData">
+                    <div class="bars">
+                      <div class="bar bar-income" [style.height.%]="getBarHeight(data.income)"></div>
+                      <div class="bar bar-expense" [style.height.%]="getBarHeight(data.expense)"></div>
+                    </div>
+                    <div class="bar-label">{{ data.date }}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="chart-legend">
+                <div class="legend-item">
+                  <span class="legend-color income"></span>
+                  <span>Income</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-color expense"></span>
+                  <span>Expense</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Doctor List -->
+          <div class="card doctor-list-card">
+            <div class="card-header">
+              <h3>Doctor List</h3>
+              <span class="badge">Today</span>
+            </div>
+            <div class="card-body">
+              <div class="doctor-item" *ngFor="let doctor of doctors">
+                <div class="doctor-avatar"></div>
+                <div class="doctor-info">
+                  <div class="doctor-name">{{ doctor.name }}</div>
+                  <div class="doctor-specialty">{{ doctor.specialty }}</div>
+                </div>
+                <button class="menu-dots">
+                  <i class="bi bi-three-dots"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Middle Column -->
+        <div class="middle-column">
+          <!-- Payment History -->
+          <div class="card payment-card">
+            <div class="card-header">
+              <h3>Payments history</h3>
+            </div>
+            <div class="card-body">
+              <div class="payment-item" *ngFor="let payment of paymentHistory">
+                <div class="payment-info">
+                  <div class="payment-service">{{ payment.service }}</div>
+                  <div class="payment-date">
+                    <i class="bi bi-clock"></i>
+                    {{ payment.date }}
+                  </div>
+                </div>
+                <div class="payment-right">
+                  <div class="payment-amount">{{ payment.amount }}</div>
+                  <button class="menu-dots">
+                    <i class="bi bi-three-dots"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Balance Card -->
+          <div class="card balance-card">
+            <div class="card-header">
+              <h3>Balance</h3>
+            </div>
+            <div class="card-body">
+              <div class="balance-item income-item">
+                <div class="balance-icon">
+                  <i class="bi bi-arrow-up"></i>
+                </div>
+                <div class="balance-info">
+                  <div class="balance-label">Income</div>
+                  <div class="balance-value">{{ balance.income }}</div>
+                </div>
+                <div class="balance-chart">
+                  <svg viewBox="0 0 100 40" width="100" height="40">
+                    <path d="M 0 30 Q 25 20 50 25 T 100 15" fill="none" stroke="#20D4B3" stroke-width="2"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="balance-item outcome-item">
+                <div class="balance-icon">
+                  <i class="bi bi-arrow-down"></i>
+                </div>
+                <div class="balance-info">
+                  <div class="balance-label">Outcome</div>
+                  <div class="balance-value">{{ balance.outcome }}</div>
+                </div>
+                <div class="balance-chart">
+                  <svg viewBox="0 0 100 40" width="100" height="40">
+                    <path d="M 0 15 Q 25 25 50 20 T 100 30" fill="none" stroke="#FF6B9D" stroke-width="2"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="right-column">
+          <!-- Upcoming Appointments -->
+          <div class="card appointments-card">
+            <div class="card-header">
+              <h3>Upcoming Appointments</h3>
+            </div>
+            <div class="card-body">
+              <div class="date-selector">
+                <button class="nav-arrow" (click)="navigateDate('prev')">
+                  <i class="bi bi-chevron-left"></i>
+                </button>
+                <div class="date-options">
+                  <div 
+                    class="date-option" 
+                    *ngFor="let option of dateOptions; let i = index"
+                    [class.active]="option.isActive"
+                    (click)="selectDate(i)">
+                    <div class="day">{{ option.day }}</div>
+                    <div class="date">{{ option.date }}</div>
+                    <i class="bi bi-calendar" *ngIf="option.isActive"></i>
+                  </div>
+                </div>
+                <button class="nav-arrow" (click)="navigateDate('next')">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </div>
+
+              <div class="appointment-list">
+                <div class="appointment-item" *ngFor="let appointment of appointments">
+                  <div class="appointment-doctor">
+                    <div class="doctor-avatar-small"></div>
+                    <div class="appointment-type">{{ appointment.type }}</div>
+                  </div>
+                  <div class="appointment-actions">
+                    <button 
+                      class="call-btn" 
+                      (click)="callDoctor(appointment)"
+                      [title]="'Call ' + appointment.doctorName">
+                      <i class="bi bi-telephone-fill"></i>
+                    </button>
+                    <div class="appointment-time">
+                      <i class="bi bi-clock"></i>
+                      {{ appointment.time }}
+                    </div>
+                    <button class="menu-dots">
+                      <i class="bi bi-three-dots"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Appointments Overview -->
+          <div class="card overview-card">
+            <div class="card-header">
+              <h3>Appointments Overview</h3>
+            </div>
+            <div class="card-body">
+              <div class="pie-chart-container">
+                <svg viewBox="0 0 200 200" width="200" height="200">
+                  <circle cx="100" cy="100" r="80" fill="none" stroke="#5B4DFF" stroke-width="40" 
+                          stroke-dasharray="176 352" transform="rotate(-90 100 100)"/>
+                  <circle cx="100" cy="100" r="80" fill="none" stroke="#20D4B3" stroke-width="40" 
+                          stroke-dasharray="150 352" stroke-dashoffset="-176" transform="rotate(-90 100 100)"/>
+                  <circle cx="100" cy="100" r="80" fill="none" stroke="#FF6B9D" stroke-width="40" 
+                          stroke-dasharray="100 352" stroke-dashoffset="-326" transform="rotate(-90 100 100)"/>
+                  <circle cx="100" cy="100" r="80" fill="none" stroke="#FFA800" stroke-width="40" 
+                          stroke-dasharray="76 352" stroke-dashoffset="-426" transform="rotate(-90 100 100)"/>
+                </svg>
+              </div>
+              <div class="chart-labels">
+                <div class="label-item">
+                  <span class="label-dot male"></span>
+                  <span>Male</span>
+                </div>
+                <div class="label-item">
+                  <span class="label-dot female"></span>
+                  <span>Female</span>
+                </div>
+                <div class="label-item">
+                  <span class="label-dot child"></span>
+                  <span>Child</span>
+                </div>
+                <div class="label-item">
+                  <span class="label-dot germany"></span>
+                  <span>Germany</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button class="floating-chat-btn">
+            <i class="bi bi-chat-dots-fill"></i>
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

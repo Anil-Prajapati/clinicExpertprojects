@@ -1,0 +1,138 @@
+<div class="container py-5 pricing-page">
+  <!-- Header -->
+  <header class="text-center mb-5 pricing-header">
+    <!-- Toggle Pills -->
+    <div class="btn-group user-toggle-pill" role="group">
+      <button type="button" 
+              class="btn btn-outline-primary"
+              [class.active]="userType === 'Clinics'" 
+              (click)="userType = 'Clinics'">
+        For Clinics
+      </button>
+      <button type="button" 
+              class="btn btn-outline-primary"
+              [class.active]="userType === 'Startups'" 
+              (click)="userType = 'Startups'">
+        For Health Service Startups
+      </button>
+    </div>
+
+    <!-- Duration Nav -->
+    <nav class="duration-nav mt-4">
+      <div class="btn-group nav-inner" role="group">
+        <button type="button" 
+                class="btn btn-outline-secondary"
+                *ngFor="let d of durations" 
+                [class.active]="selectedDuration === d.name"
+                (click)="selectedDuration = d.name">
+          {{d.name}} 
+          <span class="badge bg-success ms-2" *ngIf="d.discount">{{d.discount}}</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Pricing Grid -->
+  <main class="row justify-content-center g-4 pricing-grid">
+    <!-- Basic Plan -->
+    <section class="col-md-4">
+      <div class="card shadow-sm border-primary plan-card basic h-100">
+        <div class="card-body text-center">
+          <h3 class="card-title text-primary fw-bold">Enterprise Basic</h3>
+          <p class="text-muted">Essentials for Healthcare {{userType}}</p>
+
+          <div class="price-display mb-3">
+            <span class="currency">USD</span>
+            <span class="amount fs-1 fw-bold">{{getBasicPrice()}}</span>
+            <span class="cycle">/month</span>
+          </div>
+
+          <span class="badge bg-success mb-3">100 Credits per month</span>
+
+          <p>Up to 25 Team Users included</p>
+          <div class="input-group mb-3 user-counter">
+            <span class="input-group-text">Additional Team Users</span>
+            <input type="number" class="form-control" min="0" value="0">
+            <span class="input-group-text">User(s)</span>
+          </div>
+
+          <ul class="list-unstyled text-start">
+            <li>✔ Telemedicine, Video, Text, RPA</li>
+            <li>✔ Appointments & Payments</li>
+          </ul>
+        </div>
+        <div class="card-footer bg-transparent border-0">
+          <button class="btn btn-primary w-100 btn-basic">Start 14 day Free Trial</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Standard Plan -->
+    <section class="col-md-4">
+      <div class="card shadow border-warning plan-card standard h-100 featured">
+        <div class="recommended-label badge bg-warning text-dark position-absolute top-0 start-50 translate-middle-x">
+          RECOMMENDED
+        </div>
+        <div class="card-body text-center">
+          <h3 class="card-title text-warning fw-bold">Enterprise Standard</h3>
+          <p class="text-muted">Professional Plans for {{userType}}</p>
+
+          <div class="price-display mb-3">
+            <span class="currency">USD</span>
+            <span class="amount fs-1 fw-bold">{{getStandardPrice()}}</span>
+            <span class="cycle">/month</span>
+          </div>
+
+          <span class="badge bg-warning text-dark mb-3">150 Credits per month</span>
+
+          <p>Up to 100 Team Users included</p>
+          <div class="input-group mb-3 user-counter">
+            <span class="input-group-text">Additional Team Users</span>
+            <input type="number" class="form-control" min="0" value="0">
+            <span class="input-group-text">User(s)</span>
+          </div>
+
+          <ul class="list-unstyled text-start">
+            <li>✔ All features in Basic, Plus</li>
+            <li>✔ Provider Self-Signup</li>
+          </ul>
+        </div>
+        <div class="card-footer bg-transparent border-0">
+          <button class="btn btn-warning w-100 btn-standard">Start 14 day Free Trial</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Premium Plan -->
+    <section class="col-md-4">
+      <div class="card shadow border-info plan-card premium h-100">
+        <div class="card-body text-center">
+          <h3 class="card-title text-info fw-bold">Enterprise Premium</h3>
+          <p class="text-muted">Advanced Solutions for {{userType}}</p>
+
+          <div class="price-display mb-3">
+            <span class="amount fs-1 fw-bold">Contact Us</span>
+          </div>
+
+          <ul class="list-unstyled text-start">
+            <li>✔ Independent Hosting in AWS</li>
+            <li>✔ Fully Managed Service</li>
+            <li>✔ Dedicated Data Storage</li>
+          </ul>
+        </div>
+        <div class="card-footer bg-transparent border-0">
+          <button class="btn btn-info w-100 btn-premium">Contact Us</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center mt-5 pricing-footer">
+    <div class="alert alert-light info-box mx-auto">
+      <p>Need more Credits? <a href="#" class="link">Purchase additional credits anytime</a> to power your AI Scribe features.</p>
+      <p class="text-muted small">Additional charges apply for <strong>Video Streaming & SMS usage</strong>. Free unlimited patient users.</p>
+    </div>
+    <button class="btn btn-outline-secondary rounded-pill btn-comparison">See the feature comparison →</button>
+  </footer>
+</div>

@@ -1,0 +1,145 @@
+* { box-sizing: border-box; }
+.main-wrapper {
+  background: linear-gradient(125deg, #0b0f19, #161d2f, #0b0f19, #1a233a);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  position: relative;
+  overflow: hidden;
+}
+@keyframes gradientBG {0% { background-position: 0% 50%; }50% { background-position: 100% 50%; }100% { background-position: 0% 50%; }}
+.bg-shape {
+  position: absolute;
+  filter: blur(100px);
+  z-index: 0;
+  border-radius: 50%;
+  opacity: 0.5;
+  mix-blend-mode: screen;
+  animation: floatActive 25s infinite alternate ease-in-out;
+}
+
+.shape-1 { width: 600px; height: 600px; background: #4361ee; top: -10%; left: -10%; }
+.shape-2 { width: 500px; height: 500px; background: #7209b7; bottom: -10%; right: -10%; animation-duration: 30s;animation-delay: -2s;}
+.shape-3 { width: 400px; height: 400px; background: #4cc9f0; top: 30%; left: 50%; animation-duration: 20s;animation-delay: -5s;}
+
+@keyframes floatActive {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  33% { transform: translate(150px, 50px) scale(1.2) rotate(120deg);}
+  66% {transform: translate(-50px, 150px) scale(0.9) rotate(240deg);}
+  100% { transform: translate(0, 0) scale(1) rotate(360deg); }
+}
+@keyframes float {from { transform: translate(0, 0) rotate(0deg); }to { transform: translate(100px, 150px) rotate(30deg); }}
+/* --- 3. THE GLASS CARD --- */
+.glass-card {
+  position: relative;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(25px);
+  border-radius: 30px;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
+  width: 100%;
+  max-width: 1050px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+}
+
+/* --- 4. LEFT PANEL --- */
+.left-panel {
+  background: linear-gradient(160deg, #1e293b 0%, #0f172a 100%);
+  padding: 60px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qr-wrapper {
+  position: relative;
+  background: white;
+  padding: 15px;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+}
+.qr-wrapper img { width: 180px; }
+
+.qr-scan-line {
+  position: absolute;
+  left: 0; width: 100%; height: 2px;
+  background: #4cc9f0; box-shadow: 0 0 15px #4cc9f0;
+  animation: scan 3s linear infinite;
+}
+@keyframes scan { 0%, 100% { top: 15px; } 50% { top: 90%; } }
+
+/* --- 5. MODERN INPUT FIELDS (UPGRADED) --- */
+.form-panel { padding: 50px; background-color: #fcfdfe;}
+.modern-label {
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: block;
+  letter-spacing: 1px;
+  padding-left: 4px;
+}
+
+.modern-input, .modern-select {
+  width: 100%;
+  padding: 14px 18px;
+  background: #f8fafc;
+  border: 2px solid #edf2f7;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  color: #1e293b;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Placeholder Styling */
+.modern-input::placeholder {color: #cbd5e1;}
+/* Modern Focus Interaction */
+.modern-input:focus, .modern-select:focus {
+  background: #ffffff;
+  border-color: #4361ee;
+  box-shadow: 0 10px 25px -5px rgba(67, 97, 238, 0.1), 0 0 0 4px rgba(67, 97, 238, 0.05);
+  outline: none;
+  transform: translateY(-2px);
+}
+
+/* --- 6. VISIT TOGGLE --- */
+.visit-toggle {
+  display: flex;
+  background: #f1f5f9;
+  padding: 6px;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  gap: 5px;
+}
+.visit-toggle input { display: none; }
+.toggle-btn {
+  flex: 1; text-align: center; padding: 12px; cursor: pointer; border-radius: 12px;
+  font-weight: 700; color: #64748b; transition: 0.3s; margin-bottom: 0 !important;
+}
+.visit-toggle input:checked + .toggle-btn {
+  background: #ffffff; color: #4361ee; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+/* --- 7. SMART BUTTON --- */
+.modern-btn {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+  color: white; border: none; padding: 18px; border-radius: 16px;
+  font-weight: 700; font-size: 1.1rem; display: flex; align-items: center;
+  justify-content: center; gap: 12px; cursor: pointer; transition: 0.4s;
+  box-shadow: 0 10px 25px -5px rgba(67, 97, 238, 0.4);
+  margin-top: 10px;
+}
+.modern-btn:hover {transform: translateY(-3px);box-shadow: 0 20px 35px -10px rgba(67, 97, 238, 0.5);}
+
+/* --- 8. LIVE PING --- */
+.ping { width: 10px; height: 10px; background: #00ffcc; border-radius: 50%; display: inline-block; margin-right: 8px; position: relative;}
+.ping:after { content: ''; position: absolute; width: 100%; height: 100%; background: #00ffcc; border-radius: 50%; animation: pulse 1.5s infinite;}
+@keyframes pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }

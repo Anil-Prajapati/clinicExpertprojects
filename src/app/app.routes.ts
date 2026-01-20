@@ -5,8 +5,8 @@ import { RegistrationComponent } from './registration/registration.component';
 import { PlansComponent } from './plans/plans.component';
 import { AdminComponent } from './admin/admin.component';
 import { DoctorComponent } from './doctor/doctor.component';
-import { Component } from '@angular/core';
 import { PatientComponent } from './patient/patient.component';
+import { AppointmentComponent } from './appointment/appointment.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -16,4 +16,5 @@ export const routes: Routes = [
   { path: 'doctor', component: DoctorComponent },
   { path: 'patient', component: PatientComponent },
   { path: 'plans', component: PlansComponent },
+  { path: 'appointment', component: AppointmentComponent },
 ];

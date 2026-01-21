@@ -1,1 +1,313 @@
-<p>patient works!</p>
+<!-- dashboard.component.html -->
+<div class="d-flex" id="wrapper">
+  <!-- Overlay for mobile -->
+  <div class="sidebar-overlay" [class.show]="sidebarOpen()" (click)="closeSidebar()"></div>
+  
+  <!-- Sidebar -->
+  <aside class="sidebar shadow-lg" id="sidebar-wrapper" [class.show]="sidebarOpen()">
+    <div class="sidebar-heading border-bottom p-4">
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center">
+          <div class="logo-box me-2">
+            <img src="assets/Images/logo.png" alt="Appointment Scheduling" class="logo-png" style="width:100px;height:auto">
+          </div>
+          <span class="fw-bold text-white fs-5">ClinicExpert</span>&nbsp;&nbsp;
+        </div>
+        <button class="btn btn-sm theme-toggle" (click)="toggleThemeMenu()" title="Change Theme">
+          <i class="bi bi-palette-fill"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Theme Selector -->
+    <div class="theme-menu" [class.show]="showThemeMenu()">
+      <div class="p-3">
+        <small class="text-white-50 text-uppercase fw-bold d-block mb-3">Choose Theme Color</small>
+        <div class="theme-colors">
+          <button 
+            *ngFor="let theme of themes" 
+            class="theme-btn"
+            [class.active]="selectedTheme() === theme.name"
+            [style.background]="theme.gradient"
+            (click)="changeTheme(theme.name)"
+            [title]="theme.name">
+            <i class="bi bi-check-lg"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="list-group list-group-flush p-3">
+      <a class="nav-item mb-2" 
+         [class.active]="activeNav() === 'dashboard'"
+         (click)="setActiveNav('dashboard'); closeSidebar()">
+        <i class="bi bi-grid-1x2-fill me-3"></i>Dashboard
+      </a>
+      <a class="nav-item mb-2" 
+         [class.active]="activeNav() === 'patients'"
+         (click)="setActiveNav('patients'); closeSidebar()">
+        <i class="bi bi-people me-3"></i>Patients
+      </a>
+      <a class="nav-item mb-2" 
+         [class.active]="activeNav() === 'appointments'"
+         (click)="setActiveNav('appointments'); closeSidebar()">
+        <i class="bi bi-calendar-check me-3"></i>Appointments
+      </a>
+      <a class="nav-item mb-2" 
+         [class.active]="activeNav() === 'settings'"
+         (click)="setActiveNav('settings'); closeSidebar()">
+        <i class="bi bi-gear me-3"></i>Settings
+      </a>
+    </div>
+
+    <div class="sidebar-footer p-3 mt-auto">
+      <div class="card bg-white bg-opacity-10 border-0 p-3 rounded-3">
+        <small class="text-white-50 mb-2">Need Help?</small>
+        <button class="btn btn-sm btn-light rounded-pill">
+          <i class="bi bi-question-circle me-1"></i> Support
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div id="page-content-wrapper" class="w-100">
+    <!-- Top Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-4 py-3 sticky-top shadow-sm">
+      <div class="container-fluid">
+        <div class="d-flex align-items-center">
+          <button class="btn btn-link text-dark d-lg-none me-2 p-0" id="menu-toggle" (click)="toggleSidebar()">
+            <i class="bi bi-list fs-4"></i>
+          </button>
+          <h5 class="m-0 fw-bold d-none d-md-block" style="color: var(--theme-primary)">
+            <i class="bi bi-grid-1x2-fill me-2"></i>Dashboard Overview
+          </h5>
+        </div>
+        <div class="ms-auto d-flex align-items-center gap-3">
+          <button class="btn btn-icon position-relative">
+            <i class="bi bi-bell fs-5"></i>
+            <span class="notification-badge">3</span>
+          </button>
+          <div class="vr d-none d-md-block"></div>
+          <div class="me-2 text-end d-none d-md-block">
+            <div class="fw-bold small mb-0">Dr. Sandeep Singh</div>
+            <span class="extra-small fw-semibold" style="color: var(--theme-primary)">Administrator</span>
+          </div>
+          <div class="profile-avatar shadow-sm">SS</div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <div class="container-fluid py-4 px-lg-5 content-area">
+      <!-- Header Section -->
+      <div class="row align-items-center mb-4 g-3">
+        <div class="col-lg-6">
+          <h2 class="fw-bold text-dark m-0 d-flex align-items-center">
+            Patient Directory 
+            <span class="badge rounded-pill ms-3 fs-6 theme-badge">
+              <i class="bi bi-people-fill me-1"></i>
+              {{filteredPatients().length}} Total
+            </span>
+          </h2>
+          <p class="text-muted mb-0 mt-1">Manage and monitor all patient records</p>
+        </div>
+        <div class="col-lg-6">
+          <div class="search-container d-flex align-items-center bg-white shadow-sm rounded-pill p-1 border">
+            <i class="bi bi-search ms-3 text-muted"></i>
+            <input 
+              type="text" 
+              class="form-control border-0 shadow-none px-3 py-2 bg-transparent" 
+              placeholder="Search by patient name..." 
+              [ngModel]="searchTerm()" 
+              (ngModelChange)="searchTerm.set($event)">
+            <button class="btn btn-primary rounded-pill px-4 me-1">
+              <i class="bi bi-plus-lg me-1"></i> Add New
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="row g-4 mb-4">
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card card border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <small class="text-uppercase text-muted fw-bold extra-small d-block mb-2">Total Patients</small>
+                  <h2 class="fw-bold mb-0" style="color: var(--theme-primary)">{{patients().length}}</h2>
+                  <small class="text-success mt-2 d-block">
+                    <i class="bi bi-arrow-up me-1"></i>12% from last month
+                  </small>
+                </div>
+                <div class="stat-icon" style="background: var(--theme-light);">
+                  <i class="bi bi-people-fill" style="color: var(--theme-primary)"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card card border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <small class="text-uppercase text-muted fw-bold extra-small d-block mb-2">Critical Cases</small>
+                  <h2 class="fw-bold text-danger mb-0">{{criticalCount()}}</h2>
+                  <small class="text-danger mt-2 d-block">
+                    <i class="bi bi-exclamation-triangle me-1"></i>Immediate attention
+                  </small>
+                </div>
+                <div class="stat-icon bg-danger-subtle">
+                  <i class="bi bi-heart-pulse-fill text-danger"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card card border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <small class="text-uppercase text-muted fw-bold extra-small d-block mb-2">Stable Patients</small>
+                  <h2 class="fw-bold text-success mb-0">{{stableCount()}}</h2>
+                  <small class="text-success mt-2 d-block">
+                    <i class="bi bi-check-circle me-1"></i>Good condition
+                  </small>
+                </div>
+                <div class="stat-icon bg-success-subtle">
+                  <i class="bi bi-shield-fill-check text-success"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="stat-card card border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <small class="text-uppercase text-muted fw-bold extra-small d-block mb-2">Appointments Today</small>
+                  <h2 class="fw-bold text-info mb-0">8</h2>
+                  <small class="text-info mt-2 d-block">
+                    <i class="bi bi-calendar-check me-1"></i>Scheduled
+                  </small>
+                </div>
+                <div class="stat-icon bg-info-subtle">
+                  <i class="bi bi-calendar3 text-info"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Patient Table -->
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header bg-white border-bottom py-3 px-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold">Patient Records</h5>
+            <div class="btn-group">
+              <button class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-funnel me-1"></i> Filter
+              </button>
+              <button class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-download me-1"></i> Export
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-header">
+              <tr>
+                <th class="ps-4 py-3">
+                  <input type="checkbox" class="form-check-input">
+                </th>
+                <th class="py-3 small fw-bold">PATIENT DETAILS</th>
+                <th class="py-3 small fw-bold">VITALS/AGE</th>
+                <th class="py-3 small fw-bold">STATUS</th>
+                <th class="py-3 small fw-bold">CONTACT INFO</th>
+                <th class="py-3 small fw-bold text-end pe-4">ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="table-row" *ngFor="let p of filteredPatients()">
+                <td class="ps-4">
+                  <input type="checkbox" class="form-check-input">
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="avatar-box me-3">{{ p.name.charAt(0) }}</div>
+                    <div>
+                      <div class="fw-bold text-dark mb-0">{{ p.name }}</div>
+                      <small class="text-muted">
+                        <i class="bi bi-tag me-1"></i>#{{p.id}} | {{p.gender}}
+                      </small>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="small fw-semibold mb-1">
+                    <i class="bi bi-person me-1"></i>Age: {{p.age}} years
+                  </div>
+                  <div class="small fw-bold" style="color: var(--theme-primary)">
+                    <i class="bi bi-droplet-fill me-1"></i>{{p.bloodGroup}}
+                  </div>
+                </td>
+                <td>
+                  <span 
+                    class="badge rounded-pill px-3 py-2 fw-medium border" 
+                    [ngClass]="p.status === 'Critical' ? 'bg-danger-subtle text-danger border-danger' : 'bg-success-subtle text-success border-success'">
+                    <i class="bi" [ngClass]="p.status === 'Critical' ? 'bi-exclamation-circle' : 'bi-check-circle'"></i>
+                    {{p.status}}
+                  </span>
+                </td>
+                <td class="text-muted small">
+                  <div class="mb-1">
+                    <i class="bi bi-telephone me-2"></i>{{p.contact}}
+                  </div>
+                  <div>
+                    <i class="bi bi-calendar3 me-2"></i>{{p.admissionDate}}
+                  </div>
+                </td>
+                <td class="text-end pe-4">
+                  <div class="btn-group">
+                    <button class="btn btn-sm btn-icon" title="View Details">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-icon" title="Edit">
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="btn btn-sm btn-icon text-danger" (click)="deletePatient(p.id)" title="Delete">
+                      <i class="bi bi-trash3"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer bg-white border-top py-3 px-4">
+          <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">Showing {{filteredPatients().length}} of {{patients().length}} patients</small>
+            <nav>
+              <ul class="pagination pagination-sm mb-0">
+                <li class="page-item disabled"><a class="page-link">Previous</a></li>
+                <li class="page-item active"><a class="page-link">1</a></li>
+                <li class="page-item"><a class="page-link">2</a></li>
+                <li class="page-item"><a class="page-link">3</a></li>
+                <li class="page-item"><a class="page-link">Next</a></li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

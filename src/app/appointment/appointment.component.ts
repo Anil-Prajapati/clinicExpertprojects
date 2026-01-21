@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-appointment',
@@ -15,7 +15,7 @@ import { ActivatedRoute } from '@angular/router';
   templateUrl: './appointment.component.html',
   styleUrl: './appointment.component.css',
 })
-export class AppointmentComponent {
+export class AppointmentComponent  implements OnInit{
   appointmentForm!: FormGroup;
   showQR: boolean = true;
   doctors = [
@@ -23,7 +23,7 @@ export class AppointmentComponent {
     { id: 2, name: 'Dr. B' },
   ];
 
-  constructor(private fb: FormBuilder, private route: ActivatedRoute) {}
+  constructor(private fb: FormBuilder, private route: ActivatedRoute,private router: Router) {}
 
   ngOnInit(): void {
     this.showQR = !this.route.snapshot.queryParamMap.has('scan');
@@ -43,4 +43,5 @@ export class AppointmentComponent {
   submit() {
     console.log(this.appointmentForm.value);
   }
+  goToHome():void {this.router.navigate(['/']); }
 }

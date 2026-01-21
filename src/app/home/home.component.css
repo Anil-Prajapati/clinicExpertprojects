@@ -2827,3 +2827,46 @@ html {
     height: 25px;
   }
 }
+
+/* particles-js container styling */
+#particles-js {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  background: transparent;
+}
+
+
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .home-content h1 {
+    font-size: 2rem;
+  }
+
+  .home-content h2 {
+    font-size: 1.2rem;
+  }
+
+  .cta-button {
+    padding: 12px 30px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-content h1 {
+    font-size: 1.5rem;
+  }
+
+  .home-content h2 {
+    font-size: 1rem;
+  }
+
+  .home-content {
+    padding: 15px;
+  }
+}

@@ -1,5 +1,6 @@
-import { CommonModule, DOCUMENT } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+declare var particlesJS: any;
 
 @Component({
   selector: 'app-home',
@@ -7,9 +8,11 @@ import { Component, Inject } from '@angular/core';
   imports: [CommonModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
+  
 })
-export class HomeComponent {
-  constructor(@Inject(DOCUMENT) private doc: Document) {}
+export class HomeComponent implements OnInit{
+
+  constructor(@Inject(DOCUMENT) private doc: Document,@Inject(PLATFORM_ID) private platformId: any) {}
   activeTheme: string = 'blue';
   showTheme = false;
 
@@ -47,10 +50,41 @@ export class HomeComponent {
 }
 
 selectTheme(theme: string) {
-  this.changeTheme(theme); // tumhara existing code
-  this.showTheme = false;  // select ke baad auto close
+  this.changeTheme(theme); 
+  this.showTheme = false; 
 }
+
+ loadParticles(): void {
+    particlesJS('particles-js', {
+      particles: {
+        number: { value: 160, density: { enable: true, value_area: 800 } },
+        color: { value: '#ffffff' },
+        shape: { type: 'circle' },
+        opacity: { value: 0.5, random: false },
+        size: { value: 3, random: true },
+        line_linked: {
+          enable: true,
+          distance: 150,
+          color: '#ffffff',
+          opacity: 0.4,
+          width: 1
+        },
+        move: { enable: true, speed: 2 }
+      },
+      interactivity: {
+        detect_on: 'canvas',
+        events: {
+          onhover: { enable: true, mode: 'repulse' },
+          onclick: { enable: true, mode: 'push' }
+        }
+      }
+    });
+  }
+
   ngOnInit(): void {
-    this.changeTheme(this.activeTheme);
+     if (isPlatformBrowser(this.platformId)) { 
+       this.loadParticles();
+       this.changeTheme(this.activeTheme);
+    }
   }
 }

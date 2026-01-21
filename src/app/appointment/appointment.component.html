@@ -1,0 +1,92 @@
+<div class="main-wrapper">
+  <div class="bg-shape shape-1"></div>
+  <div class="bg-shape shape-2"></div>
+  <div class="bg-shape shape-3"></div>
+
+  <div class="glass-card">
+    <div class="row g-0">
+      
+      <div class="col-lg-5 left-panel d-none d-lg-flex">
+        <div class="overlay-content text-center">
+          <div class="qr-wrapper mb-4">
+            <img src="assets/Images/appoinment-qr-code.png" alt="QR Code">
+            <div class="qr-scan-line"></div>
+          </div>
+          <h2 class="text-white fw-bold">Smart Health</h2>
+          <p class="text-white-50 px-4">Fast-track your booking using our digital concierge.</p>
+          
+          <div class="status-indicator mt-4">
+            <span class="ping"></span>
+            <span class="text-white small fw-light">Live Availability Enabled</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-7 form-panel">
+        <div class="form-container">
+          <div class="header-box mb-4">
+            <h3 class="fw-bold color-primary">Book Appointment</h3>
+            <p class="text-muted small">Fill out the form to secure your slot instantly.</p>
+          </div>
+
+          <form [formGroup]="appointmentForm" (ngSubmit)="submit()">
+            
+            <div class="mb-4">
+              <label class="modern-label">Patient Name</label>
+              <input formControlName="patientName" class="modern-input" placeholder="Enter full name">
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-4">
+                <label class="modern-label">Phone Number</label>
+                <input formControlName="phone" class="modern-input" placeholder="+91 00000 00000">
+              </div>
+              <div class="col-md-6 mb-4">
+                <label class="modern-label">Gender</label>
+                <select formControlName="gender" class="modern-select">
+                  <option selected disabled>Choose...</option>
+                  <option>Male</option>
+                  <option>Female</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="modern-label">Specialist / Doctor</label>
+              <select formControlName="doctor" class="modern-select">
+                <option selected disabled>Select a doctor</option>
+                <option *ngFor="let doc of doctors" [value]="doc.id">{{ doc.name }}</option>
+              </select>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-4">
+                <label class="modern-label">Date</label>
+                <input type="date" formControlName="date" class="modern-input">
+              </div>
+              <div class="col-md-6 mb-4">
+                <label class="modern-label">Time Slot</label>
+                <input type="time" formControlName="time" class="modern-input">
+              </div>
+            </div>
+
+            <div class="visit-toggle mb-4">
+              <input type="radio" name="vType" id="newV" checked>
+              <label for="newV" class="toggle-btn">New Patient</label>
+              
+              <input type="radio" name="vType" id="followV">
+              <label for="followV" class="toggle-btn">Follow-Up</label>
+            </div>
+
+            <button type="submit" class="modern-btn">
+              <span>Confirm Booking</span>
+              <span class="arrow">→</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,138 +1,193 @@
-<div class="container py-5 pricing-page">
-  <!-- Header -->
-  <header class="text-center mb-5 pricing-header">
-    <!-- Toggle Pills -->
-    <div class="btn-group user-toggle-pill" role="group">
-      <button type="button" 
-              class="btn btn-outline-primary"
-              [class.active]="userType === 'Clinics'" 
-              (click)="userType = 'Clinics'">
-        For Clinics
-      </button>
-      <button type="button" 
-              class="btn btn-outline-primary"
-              [class.active]="userType === 'Startups'" 
-              (click)="userType = 'Startups'">
-        For Health Service Startups
-      </button>
-    </div>
-
-    <!-- Duration Nav -->
-    <nav class="duration-nav mt-4">
-      <div class="btn-group nav-inner" role="group">
-        <button type="button" 
-                class="btn btn-outline-secondary"
-                *ngFor="let d of durations" 
-                [class.active]="selectedDuration === d.name"
-                (click)="selectedDuration = d.name">
-          {{d.name}} 
-          <span class="badge bg-success ms-2" *ngIf="d.discount">{{d.discount}}</span>
+<div class="pricing-page">
+  <div class="pricing-container">
+    <!-- Header Section -->
+    <header class="pricing-header">
+      <div class="user-type-toggle">
+        <button
+          (click)="setUserType('Clinics')"
+          [class.active]="userType === 'Clinics'"
+          class="toggle-btn">
+          For Clinics
+        </button>
+        <button
+          (click)="setUserType('Startups')"
+          [class.active]="userType === 'Startups'"
+          class="toggle-btn">
+          For Startups
         </button>
       </div>
-    </nav>
-  </header>
 
-  <!-- Pricing Grid -->
-  <main class="row justify-content-center g-4 pricing-grid">
-    <!-- Basic Plan -->
-    <section class="col-md-4">
-      <div class="card shadow-sm border-primary plan-card basic h-100">
-        <div class="card-body text-center">
-          <h3 class="card-title text-primary fw-bold">Enterprise Basic</h3>
-          <p class="text-muted">Essentials for Healthcare {{userType}}</p>
+      <!-- Duration Toggle -->
+      <div class="duration-toggle">
+        <button
+          *ngFor="let d of durations"
+          (click)="setDuration(d.name)"
+          [class.active]="selectedDuration === d.name"
+          class="duration-btn">
+          {{d.name}}
+          <span *ngIf="d.discount" class="discount-badge">{{d.discount}}</span>
+        </button>
+      </div>
+    </header>
 
-          <div class="price-display mb-3">
-            <span class="currency">USD</span>
-            <span class="amount fs-1 fw-bold">{{getBasicPrice()}}</span>
-            <span class="cycle">/month</span>
+    <!-- Pricing Cards -->
+    <main class="pricing-cards">
+      <!-- Basic Plan -->
+      <div class="pricing-card basic-card">
+        <div class="card-glow basic-glow"></div>
+        <div class="card-content">
+          <div class="plan-header">
+            <h3 class="plan-name">Basic</h3>
+            <div class="price-container">
+              <span class="price-amount">${{getBasicPrice()}}</span>
+              <span class="price-period">/month</span>
+            </div>
           </div>
 
-          <span class="badge bg-success mb-3">100 Credits per month</span>
-
-          <p>Up to 25 Team Users included</p>
-          <div class="input-group mb-3 user-counter">
-            <span class="input-group-text">Additional Team Users</span>
-            <input type="number" class="form-control" min="0" value="0">
-            <span class="input-group-text">User(s)</span>
+          <div class="credits-badge basic-badge">
+            💳 100 Credits Included
           </div>
 
-          <ul class="list-unstyled text-start">
-            <li>✔ Telemedicine, Video, Text, RPA</li>
-            <li>✔ Appointments & Payments</li>
+          <ul class="features-list">
+            <li class="feature-item">
+              <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+              </svg>
+              <span>25 Team Users</span>
+            </li>
+            <li class="feature-item">
+              <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
+              <span>Telemedicine & RPA</span>
+            </li>
+            <li class="feature-item">
+              <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+              </svg>
+              <span>Payments & Scheduling</span>
+            </li>
           </ul>
-        </div>
-        <div class="card-footer bg-transparent border-0">
-          <button class="btn btn-primary w-100 btn-basic">Start 14 day Free Trial</button>
+
+          <div class="extra-users">
+            <label class="users-label">Extra Users</label>
+            <input
+              type="number"
+              min="0"
+              [(ngModel)]="basicExtraUsers"
+              class="users-input"
+            />
+          </div>
+
+          <button class="cta-btn basic-btn">
+            Start Free Trial
+          </button>
         </div>
       </div>
-    </section>
 
-    <!-- Standard Plan -->
-    <section class="col-md-4">
-      <div class="card shadow border-warning plan-card standard h-100 featured">
-        <div class="recommended-label badge bg-warning text-dark position-absolute top-0 start-50 translate-middle-x">
-          RECOMMENDED
-        </div>
-        <div class="card-body text-center">
-          <h3 class="card-title text-warning fw-bold">Enterprise Standard</h3>
-          <p class="text-muted">Professional Plans for {{userType}}</p>
-
-          <div class="price-display mb-3">
-            <span class="currency">USD</span>
-            <span class="amount fs-1 fw-bold">{{getStandardPrice()}}</span>
-            <span class="cycle">/month</span>
+      <!-- Standard Plan - Featured -->
+      <div class="pricing-card standard-card featured">
+        <div class="recommended-badge">⭐ RECOMMENDED</div>
+        <div class="card-glow standard-glow"></div>
+        <div class="card-content">
+          <div class="plan-header">
+            <h3 class="plan-name gradient-text">Standard</h3>
+            <div class="price-container">
+              <span class="price-amount">${{getStandardPrice()}}</span>
+              <span class="price-period">/month</span>
+            </div>
           </div>
 
-          <span class="badge bg-warning text-dark mb-3">150 Credits per month</span>
-
-          <p>Up to 100 Team Users included</p>
-          <div class="input-group mb-3 user-counter">
-            <span class="input-group-text">Additional Team Users</span>
-            <input type="number" class="form-control" min="0" value="0">
-            <span class="input-group-text">User(s)</span>
+          <div class="credits-badge standard-badge">
+            ✨ 150 Credits Included
           </div>
 
-          <ul class="list-unstyled text-start">
-            <li>✔ All features in Basic, Plus</li>
-            <li>✔ Provider Self-Signup</li>
+          <ul class="features-list">
+            <li class="feature-item">
+              <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+              </svg>
+              <span>All Basic Features</span>
+            </li>
+            <li class="feature-item">
+              <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+              </svg>
+              <span>100 Team Users</span>
+            </li>
+            <li class="feature-item">
+              <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span>Provider Self-Signup</span>
+            </li>
           </ul>
-        </div>
-        <div class="card-footer bg-transparent border-0">
-          <button class="btn btn-warning w-100 btn-standard">Start 14 day Free Trial</button>
+
+          <div class="extra-users">
+            <label class="users-label">Extra Users</label>
+            <input
+              type="number"
+              min="0"
+              [(ngModel)]="standardExtraUsers"
+              class="users-input"
+            />
+          </div>
+
+          <button class="cta-btn standard-btn">
+            Claim This Plan
+          </button>
         </div>
       </div>
-    </section>
 
-    <!-- Premium Plan -->
-    <section class="col-md-4">
-      <div class="card shadow border-info plan-card premium h-100">
-        <div class="card-body text-center">
-          <h3 class="card-title text-info fw-bold">Enterprise Premium</h3>
-          <p class="text-muted">Advanced Solutions for {{userType}}</p>
-
-          <div class="price-display mb-3">
-            <span class="amount fs-1 fw-bold">Contact Us</span>
+      <!-- Premium Plan -->
+      <div class="pricing-card premium-card">
+        <div class="card-glow premium-glow"></div>
+        <div class="card-content">
+          <div class="plan-header">
+            <h3 class="plan-name gradient-text-premium">Premium</h3>
+            <div class="price-container">
+              <span class="price-contact">Contact Us</span>
+            </div>
+            <p class="enterprise-text">Enterprise-grade infrastructure</p>
           </div>
 
-          <ul class="list-unstyled text-start">
-            <li>✔ Independent Hosting in AWS</li>
-            <li>✔ Fully Managed Service</li>
-            <li>✔ Dedicated Data Storage</li>
+          <div class="credits-badge premium-badge">
+            🏢 Custom Solution
+          </div>
+
+          <ul class="features-list">
+            <li class="feature-item">
+              <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+              </svg>
+              <span>AWS Independent Hosting</span>
+            </li>
+            <li class="feature-item">
+              <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path>
+              </svg>
+              <span>Dedicated Storage</span>
+            </li>
+            <li class="feature-item">
+              <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
+              </svg>
+              <span>Fully Managed Service</span>
+            </li>
           </ul>
-        </div>
-        <div class="card-footer bg-transparent border-0">
-          <button class="btn btn-info w-100 btn-premium">Contact Us</button>
+
+          <button class="cta-btn premium-btn">
+            Talk to Sales
+          </button>
         </div>
       </div>
-    </section>
-  </main>
+    </main>
 
-  <!-- Footer -->
-  <footer class="text-center mt-5 pricing-footer">
-    <div class="alert alert-light info-box mx-auto">
-      <p>Need more Credits? <a href="#" class="link">Purchase additional credits anytime</a> to power your AI Scribe features.</p>
-      <p class="text-muted small">Additional charges apply for <strong>Video Streaming & SMS usage</strong>. Free unlimited patient users.</p>
+    <!-- Trust Badges -->
+    <div class="trust-badges">
+      <div class="badge-item">Trusted by 500+ Healthcare Providers</div>
+      <div class="badge-item">⭐⭐⭐⭐⭐ 4.9/5 Rating</div>
+      <div class="badge-item">🔒 HIPAA Compliant</div>
     </div>
-    <button class="btn btn-outline-secondary rounded-pill btn-comparison">See the feature comparison →</button>
-  </footer>
+  </div>
 </div>

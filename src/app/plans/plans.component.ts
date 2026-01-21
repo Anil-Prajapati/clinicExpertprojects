@@ -1,43 +1,51 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+
+interface Duration {
+  name: string;
+  discount: string | null;
+}
 
 @Component({
   selector: 'app-plans',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,FormsModule],
   templateUrl: './plans.component.html',
   styleUrl: './plans.component.css',
 })
 export class PlansComponent {
- userType = 'Startups'; // 'Clinics' or 'Startups'
-  selectedDuration = 'Monthly';
+  userType: 'Clinics' | 'Startups' = 'Clinics';
+  selectedDuration: string = 'Monthly';
+  basicExtraUsers: number = 0;
+  standardExtraUsers: number = 0;
 
-  durations = [
-    { name: 'Monthly', discount: '' },
-    { name: 'Quarterly', discount: 'Save 8%' },
-    { name: 'Semi-Annual', discount: 'Save 12%' },
-    { name: 'Annual', discount: 'Save 18%' },
-    { name: 'Triennial', discount: 'Save 30%' }
+  durations: Duration[] = [
+    { name: 'Monthly', discount: null },
+    { name: 'Quarterly', discount: '10% OFF' },
+    { name: 'Yearly', discount: '20% OFF' }
   ];
 
-  // Hardcoded Data based on your images
-  pricingTable: any = {
-    'Clinics': {
-      'Monthly': { basic: 150, standard: 300 },
-      'Annual': { basic: 120, standard: 240 }
-    },
-    'Startups': {
-      'Monthly': { basic: 175, standard: 350 },
-      'Annual': { basic: 143, standard: 287 },
-      'Triennial': { basic: 122, standard: 245 }
-    }
-  };
-
-  getBasicPrice() {
-    return this.pricingTable[this.userType][this.selectedDuration]?.basic || 100;
+  getBasicPrice(): number {
+    const base = this.userType === 'Clinics' ? 99 : 149;
+    if (this.selectedDuration === 'Quarterly') return Math.round(base * 0.9);
+    if (this.selectedDuration === 'Yearly') return Math.round(base * 0.8);
+    return base;
   }
 
-  getStandardPrice() {
-    return this.pricingTable[this.userType][this.selectedDuration]?.standard || 200;
+  getStandardPrice(): number {
+    const base = this.userType === 'Clinics' ? 199 : 249;
+    if (this.selectedDuration === 'Quarterly') return Math.round(base * 0.9);
+    if (this.selectedDuration === 'Yearly') return Math.round(base * 0.8);
+    return base;
+  }
+
+  setUserType(type: 'Clinics' | 'Startups'): void {
+    this.userType = type;
+  }
+
+  setDuration(duration: string): void {
+    this.selectedDuration = duration;
   }
 }

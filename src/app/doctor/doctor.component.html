@@ -1,1 +1,147 @@
-<p>doctor works!</p>
+<div class="container-fluid p-0">
+  <div class="d-flex min-vh-100 overflow-hidden">
+    
+    <aside class="bg-white border-end shadow-sm d-flex flex-column sticky-top vh-100 transition-all"
+           [class.show]="isSidebarOpen"
+           style="width: 260px; z-index: 1050; flex-shrink: 0;">
+      
+      <div class="d-flex align-items-center justify-content-between p-3 border-bottom" 
+           style="height: 70px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="d-flex align-items-center gap-2 text-white text-truncate">
+          <div class="bg-white bg-opacity-25 rounded p-2"><i class="bi bi-heart-pulse-fill fs-5"></i></div>
+          <h5 class="m-0 fw-bold">ClinicExpert</h5>
+        </div>
+        <button class="btn text-white d-lg-none" (click)="toggleSidebar()"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <div class="p-3 bg-light border-bottom">
+        <small class="text-muted fw-bold d-block mb-2 small">THEME</small>
+        <div class="d-flex gap-2">
+          <button *ngFor="let theme of themes" 
+                  class="rounded-3 border-0 shadow-sm" 
+                  [style.background]="theme.gradient"
+                  style="width: 30px; height: 30px;"
+                  (click)="changeTheme(theme.name)"></button>
+        </div>
+      </div>
+
+      <div class="flex-grow-1 overflow-auto p-2">
+        <small class="text-muted fw-bold px-3 py-2 d-block small">MAIN MENU</small>
+        <ul class="nav nav-pills flex-column">
+          <li *ngFor="let item of menuItems; let i = index" class="nav-item mb-1">
+            <a href="javascript:void(0)" 
+               class="nav-link d-flex align-items-center gap-3 py-2 px-3 text-secondary"
+               [class.active]="item.active"
+               (click)="setActiveMenu(i)">
+              <i [class]="item.icon + ' fs-5'"></i>
+              <span class="small fw-medium">{{item.label}}</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="flex-grow-1 d-flex flex-column bg-light overflow-auto">
+      
+      <header class="navbar bg-white border-bottom shadow-sm px-4 sticky-top" style="height: 70px;">
+        <div class="container-fluid p-0">
+          <div class="d-flex align-items-center gap-3">
+            <button class="btn btn-light d-lg-none" (click)="toggleSidebar()"><i class="bi bi-list fs-4"></i></button>
+            <h5 class="m-0 fw-bold text-dark">Dashboard</h5>
+          </div>
+
+          <div class="d-flex align-items-center gap-3 ms-auto">
+            <div class="position-relative p-2 bg-light rounded-3">
+              <i class="bi bi-bell fs-5"></i>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white">2</span>
+            </div>
+            <div class="d-flex align-items-center gap-2 ps-3 border-start ms-2">
+              <div class="text-end d-none d-md-block">
+                <div class="fw-bold small">Dr. Rajeev Gupta</div>
+                <small class="text-muted small">Surgeon</small>
+              </div>
+              <img src="https://ui-avatars.com/api/?name=Rajeev+Gupta&background=667eea&color=fff" 
+                   class="rounded-3 shadow-sm border" style="width: 40px; height: 40px;">
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="p-4">
+        
+        <div class="row g-4 mb-4">
+          <div class="col-12 col-xl-4">
+            <div class="card border-0 shadow-sm text-white h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+              <div class="card-body d-flex flex-column justify-content-between p-4">
+                <div>
+                  <h5 class="fw-bold">Welcome Back! 👋</h5>
+                  <p class="text-white-50 small">You have 2 new tasks to review.</p>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                  <span class="fw-medium small">Rajeev Gupta</span>
+                  <button class="btn btn-white bg-white text-primary btn-sm px-3 fw-bold">Profile</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngFor="let stat of stats" class="col-12 col-md-6 col-xl-2">
+  <div class="card border-0 shadow-sm h-100 transition-hover">
+    <div class="card-body d-flex flex-column justify-content-between p-3">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <div class="icon-box p-3 rounded-3 shadow-sm" [style.background]="stat.bg">
+          <i [class]="'bi ' + stat.icon + ' fs-4 text-dark'"></i>
+        </div>
+        </div>
+      
+      <div>
+        <p class="text-muted small fw-bold mb-1 text-uppercase ls-1">{{stat.title}}</p>
+        <h3 class="fw-bold m-0 text-dark">{{stat.value}}</h3>
+      </div>
+    </div>
+  </div>
+</div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-12 col-lg-4">
+            <div class="card border-0 shadow-sm p-4 h-100">
+              <h6 class="fw-bold mb-1">Monthly Earning 💰</h6>
+              <p class="text-muted small mb-4">Performance this month</p>
+              <div class="d-flex align-items-center gap-3 mb-4">
+                <h2 class="fw-bold m-0">₹ 500</h2>
+                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 small">
+                  <i class="bi bi-arrow-up-short"></i> 100%
+                </span>
+              </div>
+              <div class="mt-auto">
+                <div class="d-flex justify-content-between small mb-1">
+                  <span class="text-muted">Target</span>
+                  <span class="fw-bold text-primary">80%</span>
+                </div>
+                <div class="progress" style="height: 8px;">
+                  <div class="progress-bar" style="width: 80%; background: #667eea;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-8">
+            <div class="card border-0 shadow-sm p-4 h-100">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <h6 class="fw-bold m-0">Appointments Analytics</h6>
+                <select class="form-select form-select-sm w-auto border-0 bg-light fw-bold">
+                  <option>Year 2024</option>
+                  <option>Year 2023</option>
+                </select>
+              </div>
+              <div style="height: 250px;">
+                <canvas id="appointmentChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>

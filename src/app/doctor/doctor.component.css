@@ -56,7 +56,7 @@ aside .d-flex.align-items-center.justify-content-between.p-3.border-bottom {
 }
 
 aside .d-flex.align-items-center.gap-2.text-white .bg-white.bg-opacity-25 {
-  width: 42px;
+  width: 80px;
   height: 42px;
   background: rgba(255, 255, 255, 0.25) !important;
   border-radius: 12px !important;

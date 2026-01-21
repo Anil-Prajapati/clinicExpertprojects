@@ -1,8 +1,8 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-
+declare var particlesJS: any;
 @Component({
   selector: 'app-registration',
   standalone: true,
@@ -10,11 +10,10 @@ import { Router } from '@angular/router';
   templateUrl: './registration.component.html',
   styleUrl: './registration.component.css',
 })
-export class RegistrationComponent {
+export class RegistrationComponent implements OnInit{
   showPassword: boolean = false;
   showConfirmPassword: boolean = false;
 
-  // Register Form Data
   registerData = {
     fullName: '',
     email: '',
@@ -25,9 +24,125 @@ export class RegistrationComponent {
     acceptTerms: false,
   };
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: any
+  ) {}
 
-  // Toggle password visibility
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadParticles();
+    }
+  }
+  // NASA Particles - Exact configuration
+  loadParticles(): void {
+    particlesJS('particles-js', {
+      particles: {
+        number: {
+          value: 160,
+          density: {
+            enable: true,
+            value_area: 800,
+          },
+        },
+        color: {
+          value: '#ffffff',
+        },
+        shape: {
+          type: 'circle',
+          stroke: {
+            width: 0,
+            color: '#4fc3f7',
+          },
+          polygon: {
+            nb_sides: 5,
+          },
+        },
+        opacity: {
+          value: 1,
+          random: true,
+          anim: {
+            enable: true,
+            speed: 1,
+            opacity_min: 0,
+            sync: false,
+          },
+        },
+        size: {
+          value: 3,
+          random: true,
+          anim: {
+            enable: false,
+            speed: 4,
+            size_min: 0.3,
+            sync: false,
+          },
+        },
+        line_linked: {
+          enable: false, // NASA effect mein lines nahi hai
+          distance: 150,
+          color: '#ffffff',
+          opacity: 0.4,
+          width: 1,
+        },
+        move: {
+          enable: true,
+          speed: 1,
+          direction: 'none',
+          random: true,
+          straight: false,
+          out_mode: 'out',
+          bounce: false,
+          attract: {
+            enable: false,
+            rotateX: 600,
+            rotateY: 600,
+          },
+        },
+      },
+      interactivity: {
+        detect_on: 'canvas',
+        events: {
+          onhover: {
+            enable: true,
+            mode: 'bubble',
+          },
+          onclick: {
+            enable: true,
+            mode: 'repulse',
+          },
+          resize: true,
+        },
+        modes: {
+          grab: {
+            distance: 400,
+            line_linked: {
+              opacity: 1,
+            },
+          },
+          bubble: {
+            distance: 250,
+            size: 0,
+            duration: 2,
+            opacity: 0,
+            speed: 3,
+          },
+          repulse: {
+            distance: 400,
+            duration: 0.4,
+          },
+          push: {
+            particles_nb: 4,
+          },
+          remove: {
+            particles_nb: 2,
+          },
+        },
+      },
+      retina_detect: true,
+    });
+  }
+
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }
@@ -36,33 +151,15 @@ export class RegistrationComponent {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
-  // Handle registration
   onRegister(): void {
     if (this.validateRegistration()) {
       console.log('Register Data:', this.registerData);
-      // Add your registration API call here
-      // Example:
-      // this.authService.register(this.registerData).subscribe(
-      //   response => {
-      //     console.log('Registration successful', response);
-      //     alert('Registration successful! Please login.');
-      //     this.router.navigate(['/login']);
-      //   },
-      //   error => {
-      //     console.error('Registration failed', error);
-      //     alert('Registration failed. Please try again.');
-      //   }
-      // );
-
-      // For now, just show success message
       alert('Registration successful! Redirecting to login...');
       this.router.navigate(['/login']);
     }
   }
 
-  // Validate registration form
   validateRegistration(): boolean {
-    // Check full name
     if (
       !this.registerData.fullName ||
       this.registerData.fullName.trim().length < 3
@@ -71,7 +168,6 @@ export class RegistrationComponent {
       return false;
     }
 
-    // Check email
     if (!this.registerData.email) {
       alert('Please enter your email address');
       return false;
@@ -82,7 +178,6 @@ export class RegistrationComponent {
       return false;
     }
 
-    // Check phone (optional but validate if provided)
     if (
       this.registerData.phone &&
       !this.isValidPhone(this.registerData.phone)
@@ -91,7 +186,6 @@ export class RegistrationComponent {
       return false;
     }
 
-    // Check password
     if (!this.registerData.password) {
       alert('Please enter a password');
       return false;
@@ -109,7 +203,6 @@ export class RegistrationComponent {
       return false;
     }
 
-    // Check confirm password
     if (!this.registerData.confirmPassword) {
       alert('Please confirm your password');
       return false;
@@ -120,7 +213,6 @@ export class RegistrationComponent {
       return false;
     }
 
-    // Check terms acceptance
     if (!this.registerData.acceptTerms) {
       alert('Please accept the terms and conditions');
       return false;
@@ -129,19 +221,16 @@ export class RegistrationComponent {
     return true;
   }
 
-  // Email validation
   isValidEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   }
 
-  // Phone validation
   isValidPhone(phone: string): boolean {
     const phoneRegex = /^[\d\s\-\+\(\)]+$/;
     return phoneRegex.test(phone) && phone.replace(/\D/g, '').length >= 10;
   }
 
-  // Strong password validation
   isStrongPassword(password: string): boolean {
     const hasUpperCase = /[A-Z]/.test(password);
     const hasLowerCase = /[a-z]/.test(password);
@@ -149,23 +238,18 @@ export class RegistrationComponent {
     return hasUpperCase && hasLowerCase && hasNumber;
   }
 
-  // Social registration handlers
   registerWithGoogle(): void {
     console.log('Google Registration');
-    // Add Google OAuth logic
   }
 
   registerWithMicrosoft(): void {
     console.log('Microsoft Registration');
-    // Add Microsoft OAuth logic
   }
 
   registerWithApple(): void {
     console.log('Apple Registration');
-    // Add Apple OAuth logic
   }
 
-  // Navigate to login
   goToLogin(): void {
     this.router.navigate(['/login']);
   }

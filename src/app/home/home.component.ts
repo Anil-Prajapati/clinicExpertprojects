@@ -17,6 +17,7 @@ export class HomeComponent implements OnInit{
   constructor(@Inject(DOCUMENT) private doc: Document,@Inject(PLATFORM_ID) private platformId: any) {}
   activeTheme: string = 'blue';
   showTheme = false;
+  isMenuOpen: boolean = false;
 
   themes: Record<string, { primary: string; gradient: string; light: string }> =
     {

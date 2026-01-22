@@ -5,22 +5,22 @@
       <div class="logo">
         <i class="bi bi-heart-pulse-fill"></i>
       </div>
-      <button class="menu-toggle">
+      <button class="menu-toggle" (click)="toggleSidebar()">
         <i class="bi bi-list"></i>
       </button>
       <div class="search-box">
-        <input type="text" placeholder="Search" [(ngModel)]="searchText">
+        <input type="text" placeholder="Search" [(ngModel)]="searchText" (keyup.enter)="onSearch()">
         <i class="bi bi-search"></i>
       </div>
     </div>
     <div class="header-right">
-      <button class="icon-btn">
+      <button class="icon-btn" (click)="toggleFullscreen()">
         <i class="bi bi-arrows-fullscreen"></i>
       </button>
-      <button class="icon-btn">
+      <button class="icon-btn" (click)="openNotifications()">
         <i class="bi bi-bell"></i>
       </button>
-      <button class="icon-btn">
+      <button class="icon-btn" (click)="openSettings()">
         <i class="bi bi-gear"></i>
       </button>
       <div class="admin-profile">
@@ -31,8 +31,18 @@
   </header>
 
   <div class="main-container">
+    <!-- Sidebar Overlay (for mobile) -->
+    <div class="sidebar-overlay" 
+         [class.active]="isSidebarOpen" 
+         (click)="closeSidebar()"></div>
+
     <!-- Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar" [class.open]="isSidebarOpen">
+      <!-- Close Button (for mobile) -->
+      <button class="sidebar-close" (click)="closeSidebar()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+
       <div class="emergency-help">
         <i class="bi bi-mic-fill"></i>
         <div>
@@ -46,12 +56,6 @@
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
           <i class="bi bi-chevron-down ms-auto"></i>
-        </div>
-        <div class="nav-subitems">
-          <div class="nav-subitem"><span>Dashboard 1</span></div>
-          <div class="nav-subitem"><span>Dashboard 2</span></div>
-          <div class="nav-subitem"><span>Dashboard 3</span></div>
-          <div class="nav-subitem"><span>Dashboard 4</span></div>
         </div>
 
         <div class="nav-item">
@@ -102,7 +106,7 @@
         </div>
       </nav>
 
-      <div class="appointment-card">
+      <div class="appointment-card" (click)="makeAppointment()">
         <div class="appointment-illustration">
           <i class="bi bi-person-circle"></i>
           <i class="bi bi-chat-dots-fill"></i>
@@ -182,13 +186,13 @@
               <span class="badge">Today</span>
             </div>
             <div class="card-body">
-              <div class="doctor-item" *ngFor="let doctor of doctors">
+              <div class="doctor-item" *ngFor="let doctor of doctors" (click)="viewDoctorDetails(doctor)">
                 <div class="doctor-avatar"></div>
                 <div class="doctor-info">
                   <div class="doctor-name">{{ doctor.name }}</div>
                   <div class="doctor-specialty">{{ doctor.specialty }}</div>
                 </div>
-                <button class="menu-dots">
+                <button class="menu-dots" (click)="$event.stopPropagation()">
                   <i class="bi bi-three-dots"></i>
                 </button>
               </div>
@@ -204,7 +208,7 @@
               <h3>Payments history</h3>
             </div>
             <div class="card-body">
-              <div class="payment-item" *ngFor="let payment of paymentHistory">
+              <div class="payment-item" *ngFor="let payment of paymentHistory" (click)="viewPaymentDetails(payment)">
                 <div class="payment-info">
                   <div class="payment-service">{{ payment.service }}</div>
                   <div class="payment-date">
@@ -214,7 +218,7 @@
                 </div>
                 <div class="payment-right">
                   <div class="payment-amount">{{ payment.amount }}</div>
-                  <button class="menu-dots">
+                  <button class="menu-dots" (click)="$event.stopPropagation()">
                     <i class="bi bi-three-dots"></i>
                   </button>
                 </div>
@@ -322,14 +326,10 @@
             <div class="card-body">
               <div class="pie-chart-container">
                 <svg viewBox="0 0 200 200" width="200" height="200">
-                  <circle cx="100" cy="100" r="80" fill="none" stroke="#5B4DFF" stroke-width="40" 
-                          stroke-dasharray="176 352" transform="rotate(-90 100 100)"/>
-                  <circle cx="100" cy="100" r="80" fill="none" stroke="#20D4B3" stroke-width="40" 
-                          stroke-dasharray="150 352" stroke-dashoffset="-176" transform="rotate(-90 100 100)"/>
-                  <circle cx="100" cy="100" r="80" fill="none" stroke="#FF6B9D" stroke-width="40" 
-                          stroke-dasharray="100 352" stroke-dashoffset="-326" transform="rotate(-90 100 100)"/>
-                  <circle cx="100" cy="100" r="80" fill="none" stroke="#FFA800" stroke-width="40" 
-                          stroke-dasharray="76 352" stroke-dashoffset="-426" transform="rotate(-90 100 100)"/>
+                  <circle cx="100" cy="100" r="80" fill="none" stroke="#5B4DFF" stroke-width="40" stroke-dasharray="176 352" transform="rotate(-90 100 100)"/>
+                  <circle cx="100" cy="100" r="80" fill="none" stroke="#20D4B3" stroke-width="40" stroke-dasharray="150 352" stroke-dashoffset="-176" transform="rotate(-90 100 100)"/>
+                  <circle cx="100" cy="100" r="80" fill="none" stroke="#FF6B9D" stroke-width="40" stroke-dasharray="100 352" stroke-dashoffset="-326" transform="rotate(-90 100 100)"/>
+                  <circle cx="100" cy="100" r="80" fill="none" stroke="#FFA800" stroke-width="40" stroke-dasharray="76 352" stroke-dashoffset="-426" transform="rotate(-90 100 100)"/>
                 </svg>
               </div>
               <div class="chart-labels">
@@ -352,12 +352,13 @@
               </div>
             </div>
           </div>
-
-          <button class="floating-chat-btn">
-            <i class="bi bi-chat-dots-fill"></i>
-          </button>
         </div>
       </div>
     </main>
   </div>
+
+  <!-- Floating Chat Button -->
+  <button class="floating-chat-btn" (click)="openChat()">
+    <i class="bi bi-chat-dots-fill"></i>
+  </button>
 </div>

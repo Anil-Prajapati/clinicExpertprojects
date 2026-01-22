@@ -3,39 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 // Models
-interface StatCard {
-  title: string;
-  value: string;
-  icon: string;
-}
-
-interface Appointment {
-  id: number;
-  doctorName: string;
-  doctorImage: string;
-  type: string;
-  time: string;
-}
-
-interface PaymentHistory {
-  id: number;
-  service: string;
-  amount: string;
-  date: string;
-}
-
-interface Doctor {
-  id: number;
-  name: string;
-  specialty: string;
-  image: string;
-}
-
-interface RevenueData {
-  date: string;
-  income: number;
-  expense: number;
-}
+interface StatCard {title: string; value: string; icon: string;}
+interface Appointment {id: number; doctorName: string; doctorImage: string; type: string; time: string;}
+interface PaymentHistory {id: number; service: string; amount: string; date: string;}
+interface Doctor {id: number; name: string; specialty: string; image: string;}
+interface RevenueData {date: string; income: number; expense: number;}
 
 @Component({
   selector: 'app-admin',
@@ -46,7 +18,7 @@ interface RevenueData {
 })
 export class AdminComponent implements OnInit {
   searchText = '';
-  sidebarOpen = false;
+  isSidebarOpen = false; // Fixed: Using single variable for sidebar state
   selectedDate = 'Thursday December 1st 2022';
   
   statCards: StatCard[] = [
@@ -55,12 +27,9 @@ export class AdminComponent implements OnInit {
     { title: 'Staff', value: '848', icon: 'person-badge' },
     { title: 'Total Rooms', value: '3,100', icon: 'building' }
   ];
-
-  dailyRevenue = {
-    current: '₹32,485',
-    previous: '₹12,458'
-  };
-
+  
+  dailyRevenue = {current: '₹32,485', previous: '₹12,458'};
+  
   revenueData: RevenueData[] = [
     { date: '10 May', income: 80, expense: 70 },
     { date: '11 May', income: 85, expense: 65 },
@@ -70,38 +39,29 @@ export class AdminComponent implements OnInit {
     { date: '15 May', income: 110, expense: 95 },
     { date: '16 May', income: 105, expense: 100 }
   ];
-
+  
   paymentHistory: PaymentHistory[] = [
     { id: 1, service: 'Kidney function test', amount: '₹ 25.15', date: 'Sunday, 16 May' },
     { id: 2, service: 'Emergency appointment', amount: '₹ 99.15', date: 'Sunday, 16 May' },
     { id: 3, service: 'Complementation test', amount: '₹ 40.45', date: 'Sunday, 16 May' }
   ];
-
+  
   appointments: Appointment[] = [
     { id: 1, doctorName: 'Dr. Sarah Johnson', doctorImage: 'assets/doctor1.jpg', type: 'Emergency appointment', time: '10:00' },
     { id: 2, doctorName: 'Dr. Michael Chen', doctorImage: 'assets/doctor2.jpg', type: 'USG + Consultation', time: '10:30' },
     { id: 3, doctorName: 'Dr. Emily White', doctorImage: 'assets/doctor3.jpg', type: 'Laboratory screening', time: '11:00' },
     { id: 4, doctorName: 'Dr. James Wilson', doctorImage: 'assets/doctor4.jpg', type: 'Keeping pregnant', time: '11:30' }
   ];
-
+  
   doctors: Doctor[] = [
     { id: 1, name: 'Dr. Shobha Dhaka', specialty: 'Dentist', image: 'assets/doctor1.jpg' },
     { id: 2, name: 'Dr. Navreen Kaur', specialty: 'Oculist', image: 'assets/doctor2.jpg' },
     { id: 3, name: 'Dr. Anjali Monga', specialty: 'Surgeon', image: 'assets/doctor3.jpg' }
   ];
-
-  balance = {
-    income: '₹142K',
-    outcome: '₹43K'
-  };
-
-  appointmentStats = {
-    male: 35,
-    female: 30,
-    child: 20,
-    germany: 15
-  };
-
+  
+  balance = {income: '₹142K', outcome: '₹43K'};
+  appointmentStats = { male: 35, female: 30, child: 20, germany: 15};
+  
   dateOptions = [
     { day: 'Tue', date: '29th', isActive: false },
     { day: 'Wed', date: '30th', isActive: false },
@@ -110,17 +70,20 @@ export class AdminComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    // Initialize component
     this.loadDashboardData();
   }
 
   loadDashboardData(): void {
-    // Simulate API call - data already loaded in properties
     console.log('Dashboard data loaded');
   }
 
   toggleSidebar(): void {
-    this.sidebarOpen = !this.sidebarOpen;
+    this.isSidebarOpen = !this.isSidebarOpen;
+    console.log('Sidebar state:', this.isSidebarOpen);
+  }
+
+  closeSidebar(): void {
+    this.isSidebarOpen = false;
   }
 
   getMaxValue(): number {
@@ -164,7 +127,6 @@ export class AdminComponent implements OnInit {
 
   onSearch(): void {
     console.log('Searching for:', this.searchText);
-    // Implement search functionality
   }
 
   openNotifications(): void {
@@ -195,27 +157,22 @@ export class AdminComponent implements OnInit {
     alert('Chat feature coming soon!');
   }
 
-  // Format currency
   formatCurrency(amount: number): string {
     return `₹${amount.toLocaleString('en-IN')}`;
   }
 
-  // Get appointment count by status
   getAppointmentCount(): number {
     return this.appointments.length;
   }
 
-  // Calculate total revenue
   getTotalRevenue(): number {
     return this.revenueData.reduce((sum, data) => sum + data.income, 0);
   }
 
-  // Calculate total expenses
   getTotalExpenses(): number {
     return this.revenueData.reduce((sum, data) => sum + data.expense, 0);
   }
 
-  // Get profit
   getProfit(): number {
     return this.getTotalRevenue() - this.getTotalExpenses();
   }

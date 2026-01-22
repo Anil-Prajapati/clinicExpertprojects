@@ -152,6 +152,17 @@ html {
   transform: scale(1.05);
 }
 
+.mobile-menu-btn {
+  display: none; 
+  background: none;
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
+  color: #2563eb; 
+  padding: 5px;
+  transition: transform 0.3s ease;
+}
+
 .nav-links {
   display: flex;
   gap: 40px;
@@ -2868,5 +2879,72 @@ html {
 
   .home-content {
     padding: 15px;
+  }
+}
+@media screen and (max-width: 992px) {
+  .nav-content {
+    padding: 0 20px !important;
+    position: relative;
+  }
+
+  .mobile-menu-btn {
+    display: block !important;
+    z-index: 1001;
+  }
+
+  .nav-links {
+    display: none !important;
+    /* Row layout setup */
+    flex-direction: row !important; 
+    flex-wrap: nowrap !important; /* Ek hi line mein rakhne ke liye */
+    overflow-x: auto !important; /* Side scroll enable karne ke liye */
+    
+    position: absolute !important;
+    top: 75px !important;
+    left: 0 !important;
+    width: 100% !important;
+    background: #ffffff !important;
+    padding: 10px 15px !important; /* Padding kam ki gayi hai */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    z-index: 1000 !important;
+    gap: 15px !important; /* Links ke beech ki space */
+    scrollbar-width: none; /* Firefox mein scrollbar chhupane ke liye */
+  }
+
+  /* Chrome/Safari mein scrollbar chhupane ke liye */
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-links.active {
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .nav-links a {
+    width: auto !important; /* Width 100% se hata kar auto kar di */
+    padding: 10px 5px !important;
+    text-align: left !important;
+    color: #374151 !important;
+    border-bottom: none !important; /* Border hata di */
+    display: inline-block !important;
+    white-space: nowrap !important; /* Text ko wrap hone se rokne ke liye */
+    font-size: 14px !important;
+  }
+
+  .nav-links a::after {
+    display: none !important;
+  }
+
+  /* Buttons ko row mein adjust karne ke liye */
+  .theme-toggle-btn {
+    margin: 0 !important;
+  }
+
+  .btn-trial {
+    margin: 0 10px !important;
+    width: auto !important; /* Poori width nahi lega */
+    padding: 8px 15px !important;
+    font-size: 14px !important;
   }
 }

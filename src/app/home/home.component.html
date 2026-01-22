@@ -15,17 +15,20 @@
   <!-- Navbar -->
   <nav class="navbar">
     <div class="nav-content">
-      <div class="logo"><img src="assets/Images/logo.png" alt="Appointment Scheduling" class="logo-png"> ClinicExpert</div>
-      <div class="nav-links">
-      <a routerLink="/">Home</a>
-      <a routerLink="/plans">Plans</a>
-      <a routerLink="/login">Login</a>
-      <a routerLink="/appointment">Appointment</a>
-      <a routerLink="/inventory">Inventory</a>
-
-      <button class="theme-toggle-btn" (click)="toggleTheme()">🎨</button>
-      <a routerLink="/trial" class="btn-trial">Free Trial</a>
-    </div>
+      <div class="logo"><img src="assets/Images/logo.png" alt="Logo" class="logo-png"> ClinicExpert</div>
+      <button class="mobile-menu-btn" (click)="isMenuOpen = !isMenuOpen">{{ isMenuOpen ? '✕' : '☰' }}</button>
+      <div class="nav-links" [class.active]="isMenuOpen">
+        <a routerLink="/" (click)="isMenuOpen = false">Home</a>
+        <a routerLink="/plans" (click)="isMenuOpen = false">Plans</a>
+        <a routerLink="/login" (click)="isMenuOpen = false">Login</a>
+        <a routerLink="/appointment" (click)="isMenuOpen = false">Appointment</a>
+        <a routerLink="/inventory" (click)="isMenuOpen = false">Inventory</a>
+  
+        <div class="nav-actions" style="display: contents;">
+          <button class="theme-toggle-btn" (click)="toggleTheme()">✨</button>
+          <a routerLink="/trial" class="btn-trial" (click)="isMenuOpen = false">Free Trial</a>
+        </div>
+      </div>
     </div>
   </nav>
 

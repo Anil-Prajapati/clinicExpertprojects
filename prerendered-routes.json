@@ -1,0 +1,12 @@
+{
+  "routes": [
+    "/",
+    "/admin",
+    "/appointment",
+    "/doctor",
+    "/login",
+    "/patient",
+    "/plans",
+    "/registration"
+  ]
+}

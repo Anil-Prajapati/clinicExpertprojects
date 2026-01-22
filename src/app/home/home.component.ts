@@ -1,5 +1,6 @@
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { AppRoutingModule } from "../app.routes";
 import { RouterLink } from '@angular/router';
 declare var particlesJS: any;
 
@@ -47,7 +48,7 @@ export class HomeComponent implements OnInit{
     this.doc.documentElement.style.setProperty('--light-bg',this.themes[theme].light);
   }
   toggleTheme() {
-  this.showTheme = !this.showTheme; // open/close via icon
+  this.showTheme = !this.showTheme; 
 }
 
 selectTheme(theme: string) {

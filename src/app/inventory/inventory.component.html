@@ -1,0 +1,422 @@
+<div class="inventory-container">
+  <!-- Header Section -->
+  <div class="inventory-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="page-title">
+          <i class="bi bi-box-seam"></i>
+          Inventory Management
+        </h1>
+        <p class="page-subtitle">Real-time tracking and smart analytics</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline" (click)="openUploadModal()">
+          <i class="bi bi-upload"></i>
+          Upload Excel
+        </button>
+        <button class="btn btn-outline" (click)="exportToCSV()">
+          <i class="bi bi-download"></i>
+          Export CSV
+        </button>
+        <button class="btn btn-primary" (click)="openAddModal()">
+          <i class="bi bi-plus-lg"></i>
+          Add Item
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Metrics Dashboard -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-content">
+        <div class="metric-info">
+          <p class="metric-label">Total Items</p>
+          <h3 class="metric-value">{{ metrics.totalItems }}</h3>
+          <p class="metric-change positive">
+            <i class="bi bi-arrow-up"></i> Live
+          </p>
+        </div>
+        <div class="metric-icon bg-primary">
+          <i class="bi bi-box-seam"></i>
+        </div>
+      </div>
+      <div class="metric-footer">
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="75"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <div class="metric-content">
+        <div class="metric-info">
+          <p class="metric-label">Total Value</p>
+          <h3 class="metric-value">₹{{ metrics.totalValue | number:'1.0-0' }}</h3>
+          <p class="metric-change positive">
+            <i class="bi bi-arrow-up"></i> +12.5%
+          </p>
+        </div>
+        <div class="metric-icon bg-success">
+          <i class="bi bi-currency-rupee"></i>
+        </div>
+      </div>
+      <div class="metric-footer">
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="85"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metric-card alert-card">
+      <div class="metric-content">
+        <div class="metric-info">
+          <p class="metric-label">Low Stock</p>
+          <h3 class="metric-value text-warning">{{ metrics.lowStockCount }}</h3>
+          <p class="metric-change negative">
+            <i class="bi bi-exclamation-triangle"></i> Action Required
+          </p>
+        </div>
+        <div class="metric-icon bg-warning">
+          <i class="bi bi-exclamation-triangle"></i>
+        </div>
+      </div>
+      <div class="metric-footer">
+        <div class="progress-bar">
+          <div class="progress-fill warning" [style.width.%]="metrics.lowStockCount * 10"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metric-card alert-card">
+      <div class="metric-content">
+        <div class="metric-info">
+          <p class="metric-label">Near Expiry</p>
+          <h3 class="metric-value text-danger">{{ metrics.nearExpiryCount }}</h3>
+          <p class="metric-change negative">
+            <i class="bi bi-calendar-x"></i> 30 Days
+          </p>
+        </div>
+        <div class="metric-icon bg-danger">
+          <i class="bi bi-calendar-x"></i>
+        </div>
+      </div>
+      <div class="metric-footer">
+        <div class="progress-bar">
+          <div class="progress-fill danger" [style.width.%]="metrics.nearExpiryCount * 10"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-card">
+    <div class="filters-row">
+      <div class="search-box">
+        <i class="bi bi-search"></i>
+        <input
+          type="text"
+          placeholder="Search items, suppliers, batch numbers..."
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+
+      <select
+        class="filter-select"
+        [(ngModel)]="selectedCategory"
+        (ngModelChange)="applyFilters()"
+      >
+        <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+      </select>
+
+      <select
+        class="filter-select"
+        [(ngModel)]="selectedStatus"
+        (ngModelChange)="applyFilters()"
+      >
+        <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
+      </select>
+
+      <select
+        class="filter-select"
+        [(ngModel)]="sortBy"
+        (ngModelChange)="applyFilters()"
+      >
+        <option value="name">Name</option>
+        <option value="quantity">Quantity</option>
+        <option value="price">Price</option>
+        <option value="expiryDate">Expiry Date</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Inventory Table -->
+  <div class="table-card">
+    <div class="table-container">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th>Item Details</th>
+            <th>Category</th>
+            <th class="text-center">Stock</th>
+            <th>Price</th>
+            <th>Expiry Date</th>
+            <th>Supplier</th>
+            <th>Location</th>
+            <th class="text-center">Status</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of paginatedInventory" class="table-row">
+            <td>
+              <div class="item-details">
+                <div class="item-icon">
+                  <i class="bi bi-box"></i>
+                </div>
+                <div>
+                  <div class="item-name">{{ item.name }}</div>
+                  <div class="item-batch">Batch: {{ item.batchNumber }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="category-badge">{{ item.category }}</span>
+            </td>
+            <td class="text-center">
+              <div class="stock-info">
+                <div class="stock-quantity">{{ item.quantity }} {{ item.unit }}</div>
+                <div class="stock-min">Min: {{ item.minStock }}</div>
+                <div class="stock-bar">
+                  <div 
+                    class="stock-bar-fill" 
+                    [style.width.%]="(item.quantity / (item.minStock * 2)) * 100"
+                    [class.low]="item.quantity <= item.minStock"
+                  ></div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="price-cell">₹{{ item.price | number:'1.2-2' }}</div>
+            </td>
+            <td>
+              <div class="expiry-cell">
+                <i class="bi bi-calendar3"></i>
+                {{ item.expiryDate | date:'dd MMM yyyy' }}
+              </div>
+            </td>
+            <td>{{ item.supplier }}</td>
+            <td>
+              <div class="location-badge">
+                <i class="bi bi-geo-alt"></i>
+                {{ item.location || 'N/A' }}
+              </div>
+            </td>
+            <td class="text-center">
+              <span class="status-badge" [ngClass]="getStatusClass(item)">
+                {{ getStatusText(item) }}
+              </span>
+            </td>
+            <td class="text-center">
+              <div class="action-buttons">
+                <button class="btn-icon btn-edit" (click)="openEditModal(item)" title="Edit">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn-icon btn-delete" (click)="deleteItem(item.id)" title="Delete">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container" *ngIf="totalPages > 1">
+      <div class="pagination-info">
+        Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to 
+        {{ currentPage * itemsPerPage > filteredInventory.length ? filteredInventory.length : currentPage * itemsPerPage }} 
+        of {{ filteredInventory.length }} items
+      </div>
+      
+      <div class="pagination-controls">
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === 1"
+          (click)="previousPage()">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+
+        <button 
+          *ngFor="let page of getPageNumbers()"
+          class="pagination-btn"
+          [class.active]="page === currentPage"
+          (click)="goToPage(page)">
+          {{ page }}
+        </button>
+
+        <button 
+          class="pagination-btn" 
+          [disabled]="currentPage === totalPages"
+          (click)="nextPage()">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Item Modal -->
+<div class="modal-overlay" *ngIf="showAddModal || showEditModal" (click)="closeAddModal(); closeEditModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>
+        <i class="bi bi-plus-circle"></i>
+        {{ isEditMode ? 'Edit Item' : 'Add New Item' }}
+      </h3>
+      <button class="btn-close" (click)="closeAddModal(); closeEditModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Item Name *</label>
+          <input type="text" [(ngModel)]="selectedItem.name" placeholder="Enter item name" />
+        </div>
+
+        <div class="form-group">
+          <label>Category *</label>
+          <select [(ngModel)]="selectedItem.category">
+            <option value="">Select Category</option>
+            <option *ngFor="let cat of categories.slice(1)" [value]="cat">{{ cat }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Quantity *</label>
+          <input type="number" [(ngModel)]="selectedItem.quantity" placeholder="0" />
+        </div>
+
+        <div class="form-group">
+          <label>Min Stock *</label>
+          <input type="number" [(ngModel)]="selectedItem.minStock" placeholder="0" />
+        </div>
+
+        <div class="form-group">
+          <label>Unit *</label>
+          <input type="text" [(ngModel)]="selectedItem.unit" placeholder="e.g., Box, Pack, Piece" />
+        </div>
+
+        <div class="form-group">
+          <label>Price (₹) *</label>
+          <input type="number" [(ngModel)]="selectedItem.price" placeholder="0.00" />
+        </div>
+
+        <div class="form-group">
+          <label>Expiry Date *</label>
+          <input type="date" [(ngModel)]="selectedItem.expiryDate" />
+        </div>
+
+        <div class="form-group">
+          <label>Supplier *</label>
+          <input type="text" [(ngModel)]="selectedItem.supplier" placeholder="Enter supplier name" />
+        </div>
+
+        <div class="form-group">
+          <label>Batch Number</label>
+          <input type="text" [(ngModel)]="selectedItem.batchNumber" placeholder="BTH-2024-XXX" />
+        </div>
+
+        <div class="form-group">
+          <label>Location</label>
+          <input type="text" [(ngModel)]="selectedItem.location" placeholder="e.g., Shelf A-1" />
+        </div>
+
+        <div class="form-group">
+          <label>Reorder Point</label>
+          <input type="number" [(ngModel)]="selectedItem.reorderPoint" placeholder="0" />
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeAddModal(); closeEditModal()">
+        Cancel
+      </button>
+      <button class="btn btn-primary" (click)="isEditMode ? updateItem() : addItem()">
+        <i class="bi bi-check-lg"></i>
+        {{ isEditMode ? 'Update Item' : 'Add Item' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Upload Excel Modal -->
+<div class="modal-overlay" *ngIf="showUploadModal" (click)="closeUploadModal()">
+  <div class="modal-content upload-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>
+        <i class="bi bi-upload"></i>
+        Upload Excel/CSV File
+      </h3>
+      <button class="btn-close" (click)="closeUploadModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="upload-section">
+        <div class="upload-info">
+          <i class="bi bi-info-circle"></i>
+          <p>Upload a CSV file with inventory data. Make sure your file follows the template format.</p>
+        </div>
+
+        <div class="upload-template">
+          <button class="btn btn-outline" (click)="downloadTemplate()">
+            <i class="bi bi-file-earmark-arrow-down"></i>
+            Download Template
+          </button>
+        </div>
+
+        <div class="upload-area">
+          <i class="bi bi-cloud-upload"></i>
+          <p>Choose a file or drag it here</p>
+          <input 
+            type="file" 
+            accept=".csv,.xlsx,.xls" 
+            (change)="onFileSelected($event)"
+            id="fileInput"
+          />
+          <label for="fileInput" class="btn btn-primary">
+            <i class="bi bi-folder2-open"></i>
+            Browse Files
+          </label>
+          <p class="file-name" *ngIf="selectedFile">{{ selectedFile.name }}</p>
+        </div>
+
+        <div class="upload-format">
+          <h4>Expected Format:</h4>
+          <ul>
+            <li>Name, Category, Quantity, Min Stock, Unit, Price, Expiry Date, Supplier, Batch Number, Location, Reorder Point</li>
+            <li>Date format: YYYY-MM-DD (e.g., 2025-12-31)</li>
+            <li>First row should be headers</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeUploadModal()">
+        Cancel
+      </button>
+      <button class="btn btn-primary" (click)="uploadExcel()" [disabled]="!selectedFile">
+        <i class="bi bi-upload"></i>
+        Upload File
+      </button>
+    </div>
+  </div>
+</div>

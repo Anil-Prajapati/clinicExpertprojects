@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
@@ -7,6 +7,7 @@ import { AdminComponent } from './admin/admin.component';
 import { DoctorComponent } from './doctor/doctor.component';
 import { PatientComponent } from './patient/patient.component';
 import { AppointmentComponent } from './appointment/appointment.component';
+import { NgModule } from '@angular/core';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -18,3 +19,9 @@ export const routes: Routes = [
   { path: 'plans', component: PlansComponent },
   { path: 'appointment', component: AppointmentComponent },
 ];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes, { useHash: true })],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }

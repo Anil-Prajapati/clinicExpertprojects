@@ -1,15 +1,15 @@
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { AppRoutingModule } from "../app.routes";
 import { RouterLink } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 declare var particlesJS: any;
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule,RouterLink],
+  imports: [CommonModule,RouterLink,HttpClientModule],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css',
+  styleUrls: ['./home.component.css'], 
   
 })
 export class HomeComponent implements OnInit{

@@ -1960,7 +1960,6 @@ html {
 }
 
 .theme-buttons button.active {
-  ring: 2px solid #9ca3af;
   box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.5);
 }
 

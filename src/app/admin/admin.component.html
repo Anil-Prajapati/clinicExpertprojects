@@ -23,22 +23,20 @@
       <button class="icon-btn" (click)="openSettings()">
         <i class="bi bi-gear"></i>
       </button>
+      <button class="icon-btn logout-style" (click)="onLogout()" title="Logout">
+         <i class="bi bi-box-arrow-right"></i>
+     </button>
       <div class="admin-profile">
-        <span class="admin-label">ADMIN</span>
-        <div class="admin-avatar"></div>
+        <span class="admin-label">{{role}}</span>
+        <img [src]="getAvatarUrl(loginName)" class="rounded-3 shadow-sm border" style="width: 40px; height: 40px;"/>
       </div>
     </div>
   </header>
 
   <div class="main-container">
-    <!-- Sidebar Overlay (for mobile) -->
-    <div class="sidebar-overlay" 
-         [class.active]="isSidebarOpen" 
-         (click)="closeSidebar()"></div>
-
+    <div class="sidebar-overlay" [class.active]="isSidebarOpen" (click)="closeSidebar()"></div>
     <!-- Sidebar -->
     <aside class="sidebar" [class.open]="isSidebarOpen">
-      <!-- Close Button (for mobile) -->
       <button class="sidebar-close" (click)="closeSidebar()">
         <i class="bi bi-x-lg"></i>
       </button>

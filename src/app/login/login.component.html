@@ -1,3 +1,7 @@
+<div class="loading-overlay" *ngIf="isLoading">
+  <div class="medical-pulse"></div>
+  <div class="loading-text">Verification in progress...</div>
+</div>
 
 <div class="auth-container">
   <div id="particles-js"></div>
@@ -59,13 +63,13 @@
           <!-- Email Input -->
           <div class="form-group">
             <label for="login-email">
-              <i data-feather="mail"></i>
-              Email Address
+              <i data-feather="user"></i>
+              Email or Contact Number
             </label>
             <input 
-              type="email" 
+              type="text" 
               id="login-email"
-              [(ngModel)]="loginData.email"
+              [(ngModel)]="loginData.clinicEmail"
               name="email"
               placeholder="Enter your email"
               autocomplete="email"
@@ -82,7 +86,7 @@
               <input 
                 [type]="showPassword ? 'text' : 'password'" 
                 id="login-password"
-                [(ngModel)]="loginData.password"
+                [(ngModel)]="loginData.clinicPassword"
                 name="password"
                 placeholder="Enter your password"
                 autocomplete="current-password"
@@ -148,9 +152,6 @@
           <p>Don't have an account? <a href="#" (click)="goToRegister(); $event.preventDefault()">Create Account</a></p>&nbsp; <p><a href="#" (click)="goToHome()">Home</a></p>
         </div>
       </div>
-
     </div>
-
   </div>
-
 </div>

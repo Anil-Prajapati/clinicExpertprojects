@@ -2,7 +2,11 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../core/core/services/auth.service';
+import Swal from 'sweetalert2';
+
 declare var particlesJS: any;
+
 @Component({
   selector: 'app-registration',
   standalone: true,
@@ -10,23 +14,37 @@ declare var particlesJS: any;
   templateUrl: './registration.component.html',
   styleUrl: './registration.component.css',
 })
-export class RegistrationComponent implements OnInit{
-  showPassword: boolean = false;
-  showConfirmPassword: boolean = false;
+export class RegistrationComponent implements OnInit {
+  selectedRole: 'CLINIC' | 'PATIENT' = 'CLINIC';
+  showPassword = false;
+  showConfirmPassword = false;
+  isLoading = false;
 
-  registerData = {
-    fullName: '',
-    email: '',
-    phone: '',
+  registerData: any = {
+    clinicCode: '', // Naya field
     clinicName: '',
-    password: '',
-    confirmPassword: '',
+    clinicStatus: 'ACTIVE',
+    clinicContact: '',
+    clinicEmail: '',
+    clinicPassword: '',
+    confirmPassword: '', // Sirf validation ke liye
+    clinicAddress: '',
+    clinicCity: '',
+    clinicState: '',
+    clinicPinCode: '',
+    clinicTimezone: 'IST',
+    clinicOpeningTime: '09:00',
+    clinicClosingTime: '21:00',
+    clinicSubscriptionPlan: 'FREE',
+    clinicLogo: 'default-logo.png', // Default value set kar di
+    resetToken: '',
     acceptTerms: false,
   };
 
   constructor(
     private router: Router,
-    @Inject(PLATFORM_ID) private platformId: any
+    @Inject(PLATFORM_ID) private platformId: any,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -34,223 +52,219 @@ export class RegistrationComponent implements OnInit{
       this.loadParticles();
     }
   }
-  // NASA Particles - Exact configuration
-  loadParticles(): void {
-    particlesJS('particles-js', {
-      particles: {
-        number: {
-          value: 160,
-          density: {
-            enable: true,
-            value_area: 800,
-          },
-        },
-        color: {
-          value: '#ffffff',
-        },
-        shape: {
-          type: 'circle',
-          stroke: {
-            width: 0,
-            color: '#4fc3f7',
-          },
-          polygon: {
-            nb_sides: 5,
-          },
-        },
-        opacity: {
-          value: 1,
-          random: true,
-          anim: {
-            enable: true,
-            speed: 1,
-            opacity_min: 0,
-            sync: false,
-          },
-        },
-        size: {
-          value: 3,
-          random: true,
-          anim: {
-            enable: false,
-            speed: 4,
-            size_min: 0.3,
-            sync: false,
-          },
-        },
-        line_linked: {
-          enable: false, // NASA effect mein lines nahi hai
-          distance: 150,
-          color: '#ffffff',
-          opacity: 0.4,
-          width: 1,
-        },
-        move: {
-          enable: true,
-          speed: 1,
-          direction: 'none',
-          random: true,
-          straight: false,
-          out_mode: 'out',
-          bounce: false,
-          attract: {
-            enable: false,
-            rotateX: 600,
-            rotateY: 600,
-          },
-        },
-      },
-      interactivity: {
-        detect_on: 'canvas',
-        events: {
-          onhover: {
-            enable: true,
-            mode: 'bubble',
-          },
-          onclick: {
-            enable: true,
-            mode: 'repulse',
-          },
-          resize: true,
-        },
-        modes: {
-          grab: {
-            distance: 400,
-            line_linked: {
-              opacity: 1,
-            },
-          },
-          bubble: {
-            distance: 250,
-            size: 0,
-            duration: 2,
-            opacity: 0,
-            speed: 3,
-          },
-          repulse: {
-            distance: 400,
-            duration: 0.4,
-          },
-          push: {
-            particles_nb: 4,
-          },
-          remove: {
-            particles_nb: 2,
-          },
-        },
-      },
-      retina_detect: true,
-    });
-  }
 
-  togglePasswordVisibility(): void {
-    this.showPassword = !this.showPassword;
+  onRoleChange() {
+    this.registerData = {
+      email: '',
+      phone: '',
+      password: '',
+      confirmPassword: '',
+      city: '',
+      state: '',
+      address: '',
+      pinCode: '',
+      clinicName: '',
+      clinicOpeningTime: '09:00',
+      clinicClosingTime: '21:00',
+      clinicSubscriptionPlan: 'FREE',
+      clinicTimezone: 'IST',
+      fullName: '',
+      gender: 'MALE',
+      dob: '',
+      bloodGroup: '',
+      acceptTerms: false,
+    };
   }
+  onRegister() {
+    if (!this.validateRegistration()) return;
 
-  toggleConfirmPasswordVisibility(): void {
-    this.showConfirmPassword = !this.showConfirmPassword;
-  }
+    this.isLoading = true;
 
-  onRegister(): void {
-    if (this.validateRegistration()) {
-      console.log('Register Data:', this.registerData);
-      alert('Registration successful! Redirecting to login...');
-      this.router.navigate(['/login']);
+    if (this.selectedRole === 'CLINIC') {
+      const clinicPayload = {
+        clinicCode: this.registerData.clinicCode ||'GEN-' + Math.floor(Math.random() * 9000),
+        clinicName: this.registerData.clinicName,
+        clinicStatus: 'ACTIVE',
+        clinicContact: this.registerData.clinicContact,
+        clinicEmail: this.registerData.clinicEmail,
+        clinicPassword: this.registerData.clinicPassword,
+        clinicAddress: this.registerData.clinicAddress,
+        clinicCity: this.registerData.clinicCity,
+        clinicState: this.registerData.clinicState,
+        clinicPinCode: this.registerData.clinicPinCode,
+        clinicTimezone: this.registerData.clinicTimezone,
+        clinicOpeningTime: this.registerData.clinicOpeningTime,
+        clinicClosingTime: this.registerData.clinicClosingTime,
+        clinicSubscriptionPlan: this.registerData.clinicSubscriptionPlan,
+        clinicLogo: this.registerData.clinicLogo,
+        resetToken: this.registerData.resetToken,
+      };
+
+      console.log('Clinic PayLoad', clinicPayload);
+      this.authService.registerClinic(clinicPayload).subscribe({
+        next: () => this.handleSuccess(),
+        error: (err) => this.handleError(err),
+      });
+    } else {
+      const patientPayload = {
+        fullName: this.registerData.fullName,
+        patientEmail: this.registerData.email,
+        contactNumber: this.registerData.phone,
+        patientPassword: this.registerData.password,
+        gender: this.registerData.gender,
+        dateOfBirth: this.registerData.dob,
+        bloodGroup: this.registerData.bloodGroup,
+        address: this.registerData.address,
+        city: this.registerData.city,
+        state: this.registerData.state,
+        pinCode: this.registerData.pinCode,
+        patientStatus: 'ACTIVE',
+      };
+
+      console.log('Patient PayLoad', patientPayload);
+      this.authService.registerPatient(patientPayload).subscribe({
+        next: () => this.handleSuccess(),
+        error: (err) => this.handleError(err),
+      });
     }
   }
-
   validateRegistration(): boolean {
-    if (
-      !this.registerData.fullName ||
-      this.registerData.fullName.trim().length < 3
-    ) {
-      alert('Please enter your full name (minimum 3 characters)');
+    const data = this.registerData;
+    const isClinic = this.selectedRole === 'CLINIC';
+
+    // 1. Email Validation
+    const emailVal = isClinic ? data.clinicEmail : data.email;
+    if (!emailVal || !this.isValidEmail(emailVal)) {
+      this.toastError('Please enter a valid Email Address');
       return false;
     }
 
-    if (!this.registerData.email) {
-      alert('Please enter your email address');
+    // 2. Phone Validation
+    const phoneVal = isClinic ? data.clinicContact : data.phone;
+    if (!phoneVal || phoneVal.toString().length < 10) {
+      this.toastError('Please enter a valid 10-digit Phone Number');
       return false;
     }
 
-    if (!this.isValidEmail(this.registerData.email)) {
-      alert('Please enter a valid email address');
+    // 3. Password Validation (Fixed Ram@1434 issue)
+    const passVal = isClinic ? data.clinicPassword : data.password;
+    const confirmPassVal = data.confirmPassword;
+
+    if (!passVal || passVal.length < 6) {
+      this.toastError('Password must be at least 6 characters');
       return false;
     }
 
-    if (
-      this.registerData.phone &&
-      !this.isValidPhone(this.registerData.phone)
-    ) {
-      alert('Please enter a valid phone number');
+    if (passVal !== confirmPassVal) {
+      this.toastError('Passwords do not match');
       return false;
     }
 
-    if (!this.registerData.password) {
-      alert('Please enter a password');
-      return false;
+    // 4. Role Specific Validations
+    if (isClinic) {
+      if (!data.clinicName || data.clinicName.length < 3) {
+        this.toastError('Clinic Name is required (min 3 chars)');
+        return false;
+      }
+      if (!data.clinicCity) {
+        this.toastError('City is required');
+        return false;
+      }
+      if (!data.clinicAddress) {
+        this.toastError('Full Address is required');
+        return false;
+      }
+    } else {
+      if (!data.fullName || data.fullName.length < 3) {
+        this.toastError('Full Name is required');
+        return false;
+      }
+      if (!data.dob) {
+        this.toastError('Date of Birth is required');
+        return false;
+      }
     }
 
-    if (this.registerData.password.length < 8) {
-      alert('Password must be at least 8 characters long');
-      return false;
-    }
-
-    if (!this.isStrongPassword(this.registerData.password)) {
-      alert(
-        'Password must contain at least one uppercase letter, one lowercase letter, and one number'
-      );
-      return false;
-    }
-
-    if (!this.registerData.confirmPassword) {
-      alert('Please confirm your password');
-      return false;
-    }
-
-    if (this.registerData.password !== this.registerData.confirmPassword) {
-      alert('Passwords do not match');
-      return false;
-    }
-
-    if (!this.registerData.acceptTerms) {
-      alert('Please accept the terms and conditions');
+    // 5. Terms & Conditions
+    if (!data.acceptTerms) {
+      this.toastError('Please accept Terms & Conditions');
       return false;
     }
 
     return true;
   }
 
-  isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-
-  isValidPhone(phone: string): boolean {
-    const phoneRegex = /^[\d\s\-\+\(\)]+$/;
-    return phoneRegex.test(phone) && phone.replace(/\D/g, '').length >= 10;
-  }
-
-  isStrongPassword(password: string): boolean {
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasLowerCase = /[a-z]/.test(password);
-    const hasNumber = /\d/.test(password);
-    return hasUpperCase && hasLowerCase && hasNumber;
-  }
-
-  registerWithGoogle(): void {
-    console.log('Google Registration');
-  }
-
-  registerWithMicrosoft(): void {
-    console.log('Microsoft Registration');
-  }
-
-  registerWithApple(): void {
-    console.log('Apple Registration');
-  }
-
-  goToLogin(): void {
+  private handleSuccess() {
+    this.isLoading = false;
+    Swal.fire('Success', 'Account Created Successfully!', 'success');
     this.router.navigate(['/login']);
+  }
+  private handleError(err: any) {
+    this.isLoading = false;
+    Swal.fire('Error', err.error?.message || 'Registration Failed.', 'error');
+  }
+  toastError(msg: string) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Validation Error',
+      text: msg,
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+    });
+  }
+  isValidEmail(email: string): boolean {
+    if (!email) return false;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email.trim());
+  }
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
+  goToLogin() {
+    this.router.navigate(['/login']);
+  }
+  registerWithGoogle() {
+    console.log('Google Sign-up');
+  }
+  registerWithMicrosoft() {
+    console.log('Microsoft Sign-up');
+  }
+  registerWithApple() {
+    console.log('Apple Sign-up');
+  }
+
+  loadParticles() {
+    if (typeof particlesJS !== 'undefined') {
+      particlesJS('particles-js', {
+        particles: {
+          number: { value: 260, density: { enable: true, value_area: 600 } },
+          color: { value: '#ffffff' },
+          shape: { type: 'circle' },
+          opacity: {
+            value: 1,
+            random: true,
+            anim: { enable: true, speed: 1, opacity_min: 0, sync: false },
+          },
+          size: { value: 3, random: true },
+          move: { enable: true, speed: 1, direction: 'none', out_mode: 'out' },
+        },
+        interactivity: {
+          detect_on: 'canvas',
+          events: {
+            onhover: { enable: true, mode: 'bubble' },
+            onclick: { enable: true, mode: 'repulse' },
+          },
+          modes: {
+            bubble: { distance: 250, size: 0, opacity: 0 },
+            repulse: { distance: 400 },
+          },
+        },
+      });
+    }
   }
 }

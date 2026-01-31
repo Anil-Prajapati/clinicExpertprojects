@@ -50,20 +50,21 @@
               <span
                 class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white">2</span>
             </div>
+            <button class="icon-btn logout-style" (click)="onLogout()" title="Logout">
+                <i class="bi bi-box-arrow-right"></i>
+            </button>
             <div class="d-flex align-items-center gap-2 ps-3 border-start ms-2">
               <div class="text-end d-none d-md-block">
-                <div class="fw-bold small">Dr. Rajeev Gupta</div>
-                <small class="text-muted small">Surgeon</small>
+                <div class="fw-bold small">{{loginName}}</div>
+                <small class="text-muted small">{{specialization}}</small>
               </div>
-              <img src="https://ui-avatars.com/api/?name=Rajeev+Gupta&background=667eea&color=fff"
-                class="rounded-3 shadow-sm border" style="width: 40px; height: 40px;">
+              <img [src]="getAvatarUrl(loginName || '')" class="rounded-3 shadow-sm border" style="width: 40px; height: 40px;"/>
             </div>
           </div>
         </div>
       </header>
 
       <main class="p-4">
-
         <div class="row g-4 mb-4">
           <div class="col-12 col-xl-4">
             <div class="card border-0 shadow-sm text-white h-100"

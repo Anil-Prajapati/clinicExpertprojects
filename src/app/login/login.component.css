@@ -527,7 +527,76 @@
   color: #764ba2;
 }
 
-/* Responsive Design */
+.loading-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px); 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.medical-pulse {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(45deg, #3498db, #2ecc71, #e74c3c, #9b59b6);
+  background-size: 400% 400%;
+  border-radius: 50%;
+  position: relative;
+  animation: pulse-morph 1.5s ease-in-out infinite, color-shift 5s ease infinite;
+}
+
+.medical-pulse::before, .medical-pulse::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  background: inherit; 
+  opacity: 0.5;
+  animation: pulse-wave 1.5s ease-in-out infinite;
+}
+
+.medical-pulse::after {animation-delay: 0.5s;}
+
+@keyframes color-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes pulse-morph {
+  0%, 100% { transform: scale(1); border-radius: 50%; }
+  50% { transform: scale(0.8); border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+}
+
+@keyframes pulse-wave {
+  0% { transform: scale(1); opacity: 0.6; filter: hue-rotate(0deg); }
+  100% { transform: scale(3); opacity: 0; filter: hue-rotate(360deg); } /* Waves change color as they expand */
+}
+
+.loading-text {
+  margin-top: 50px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-size: 13px;
+  background: linear-gradient(to right, #3498db, #9b59b6, #e74c3c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-glow 2s linear infinite;
+}
+
+@keyframes text-glow {
+  0%, 100% { opacity: 0.8; filter: brightness(1); }
+  50% { opacity: 1; filter: brightness(1.5); }
+}
+
 @media (max-width: 992px) {
   .auth-card {
     grid-template-columns: 1fr;

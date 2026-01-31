@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../core/core/services/auth.service';
 
 // Models
 interface StatCard {title: string; value: string; icon: string;}
@@ -18,9 +20,13 @@ interface RevenueData {date: string; income: number; expense: number;}
 })
 export class AdminComponent implements OnInit {
   searchText = '';
-  isSidebarOpen = false; // Fixed: Using single variable for sidebar state
+  isSidebarOpen = false; 
   selectedDate = 'Thursday December 1st 2022';
-  
+  loginName: string | null = '';
+  specialization: string | null = '';
+  role: string | null = ''; 
+
+  constructor(public authService: AuthService,private router: Router) {}
   statCards: StatCard[] = [
     { title: 'Total Patients', value: '1,548', icon: 'people' },
     { title: 'Consultation', value: '448', icon: 'chat-dots' },
@@ -69,111 +75,34 @@ export class AdminComponent implements OnInit {
     { day: 'Fri', date: '2nd', isActive: false }
   ];
 
-  ngOnInit(): void {
-    this.loadDashboardData();
+  ngOnInit(): void {this.loadDashboardData();
+    this.loginName = localStorage.getItem('loginName');
+    this.specialization = localStorage.getItem('doctorSpecilization');
+    this.role = localStorage.getItem('userRole');
   }
-
-  loadDashboardData(): void {
-    console.log('Dashboard data loaded');
-  }
-
-  toggleSidebar(): void {
-    this.isSidebarOpen = !this.isSidebarOpen;
-    console.log('Sidebar state:', this.isSidebarOpen);
-  }
-
-  closeSidebar(): void {
-    this.isSidebarOpen = false;
-  }
-
-  getMaxValue(): number {
-    const values = this.revenueData.flatMap(d => [d.income, d.expense]);
-    return Math.max(...values);
-  }
-
-  getBarHeight(value: number): number {
-    const maxValue = this.getMaxValue();
-    return (value / maxValue) * 100;
-  }
-
-  selectDate(index: number): void {
-    this.dateOptions.forEach((option, i) => {
-      option.isActive = i === index;
-    });
-    this.selectedDate = this.dateOptions[index].date;
-  }
-
-  navigateDate(direction: 'prev' | 'next'): void {
-    const currentIndex = this.dateOptions.findIndex(d => d.isActive);
-    if (direction === 'prev' && currentIndex > 0) {
-      this.selectDate(currentIndex - 1);
-    } else if (direction === 'next' && currentIndex < this.dateOptions.length - 1) {
-      this.selectDate(currentIndex + 1);
-    }
-  }
-
-  callDoctor(appointment: Appointment): void {
-    console.log('Calling doctor for appointment:', appointment);
-    alert(`Calling ${appointment.doctorName} for ${appointment.type}`);
-  }
-
-  viewPaymentDetails(payment: PaymentHistory): void {
-    console.log('Payment details:', payment);
-  }
-
-  viewDoctorDetails(doctor: Doctor): void {
-    console.log('Doctor details:', doctor);
-  }
-
-  onSearch(): void {
-    console.log('Searching for:', this.searchText);
-  }
-
-  openNotifications(): void {
-    console.log('Opening notifications');
-  }
-
-  openSettings(): void {
-    console.log('Opening settings');
-  }
-
-  toggleFullscreen(): void {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      }
-    }
-  }
-
-  makeAppointment(): void {
-    console.log('Make appointment clicked');
-    alert('Opening appointment booking form...');
-  }
-
-  openChat(): void {
-    console.log('Opening chat');
-    alert('Chat feature coming soon!');
-  }
-
-  formatCurrency(amount: number): string {
-    return `₹${amount.toLocaleString('en-IN')}`;
-  }
-
-  getAppointmentCount(): number {
-    return this.appointments.length;
-  }
-
-  getTotalRevenue(): number {
-    return this.revenueData.reduce((sum, data) => sum + data.income, 0);
-  }
-
-  getTotalExpenses(): number {
-    return this.revenueData.reduce((sum, data) => sum + data.expense, 0);
-  }
-
-  getProfit(): number {
-    return this.getTotalRevenue() - this.getTotalExpenses();
-  }
+  getAvatarUrl(name: string | undefined | null): string {
+  const n = (name || '').trim().replace(/^dr\.?\s*/i, '');
+  return `https://ui-avatars.com/api/?name=${(n[0] || 'U').toUpperCase()}&background=667eea&color=fff`;}
+  onLogout() {this.authService.logout();this.router.navigate(['/login']); }
+  loadDashboardData(): void {console.log('Dashboard data loaded');}
+  toggleSidebar(): void {this.isSidebarOpen = !this.isSidebarOpen;console.log('Sidebar state:', this.isSidebarOpen);}
+  closeSidebar(): void {this.isSidebarOpen = false;}
+  getMaxValue(): number {const values = this.revenueData.flatMap(d => [d.income, d.expense]); return Math.max(...values);}
+  getBarHeight(value: number): number {const maxValue = this.getMaxValue();return (value / maxValue) * 100;}
+  selectDate(index: number): void {this.dateOptions.forEach((option, i) => {option.isActive = i === index;});this.selectedDate = this.dateOptions[index].date;}
+  navigateDate(direction: 'prev' | 'next'): void {const currentIndex = this.dateOptions.findIndex(d => d.isActive);if (direction === 'prev' && currentIndex > 0) {this.selectDate(currentIndex - 1);} else if (direction === 'next' && currentIndex < this.dateOptions.length - 1) {this.selectDate(currentIndex + 1);}}
+  callDoctor(appointment: Appointment): void {console.log('Calling doctor for appointment:', appointment);alert(`Calling ${appointment.doctorName} for ${appointment.type}`);}
+  viewPaymentDetails(payment: PaymentHistory): void {console.log('Payment details:', payment);}
+  viewDoctorDetails(doctor: Doctor): void {console.log('Doctor details:', doctor);}
+  onSearch(): void {console.log('Searching for:', this.searchText);}
+  openNotifications(): void { console.log('Opening notifications');}
+  openSettings(): void {console.log('Opening settings');}
+  toggleFullscreen(): void {if (!document.fullscreenElement) {document.documentElement.requestFullscreen();} else {if (document.exitFullscreen) { document.exitFullscreen(); } }}
+  makeAppointment(): void {console.log('Make appointment clicked');alert('Opening appointment booking form...');}
+  openChat(): void {console.log('Opening chat');alert('Chat feature coming soon!');}
+  formatCurrency(amount: number): string {return `₹${amount.toLocaleString('en-IN')}`;}
+  getAppointmentCount(): number {return this.appointments.length;}
+  getTotalRevenue(): number {return this.revenueData.reduce((sum, data) => sum + data.income, 0);}
+  getTotalExpenses(): number {return this.revenueData.reduce((sum, data) => sum + data.expense, 0);}
+  getProfit(): number {return this.getTotalRevenue() - this.getTotalExpenses();}
 }

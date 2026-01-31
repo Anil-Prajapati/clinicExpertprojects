@@ -1,6 +1,8 @@
-import {Component,signal,computed,OnInit,Inject,PLATFORM_ID,} from '@angular/core';
+import {Component,signal,computed,OnInit,Inject,PLATFORM_ID, inject,} from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../core/core/services/auth.service';
 
 interface Patient {id: number;name: string;age: number;gender: string;bloodGroup: string;status: string;contact: string;admissionDate: string;}
 interface Theme {name: string;primary: string;secondary: string;gradient: string;light: string;hover: string;}
@@ -18,8 +20,14 @@ export class PatientComponent implements OnInit {
   selectedTheme = signal('blue');
   activeNav = signal('dashboard');
   sidebarOpen = signal(false);
+  private router = inject(Router); 
+  private TOKEN_KEY = 'access_token';
+  private ROLE_KEY = 'userRole';
+  loginName: string | null = '';
+  specialization: string | null = '';
+  role: string | null = ''; 
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: Object,public authService:AuthService) {}
 
   themes: Theme[] = [
     {name: 'blue',primary: '#0d6efd',secondary: '#0b5ed7',gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',light: '#e7f1ff',hover: 'rgba(13, 110, 253, 0.1)',},
@@ -43,7 +51,13 @@ export class PatientComponent implements OnInit {
   toggleThemeMenu() {this.showThemeMenu.update(v => !v);}
   toggleSidebar() {this.sidebarOpen.update(v => !v); }
   closeSidebar() {this.sidebarOpen.set(false);}
-  setActiveNav(nav: string) {this.activeNav.set(nav);}
+  setActiveNav(nav: string) {
+  this.activeNav.set(nav); // Jo nav pass ho wahi set ho
+  if (nav === 'appointments') {
+    this.router.navigate(['/appointment']); // Route 'appointment' hai
+  }
+  this.closeSidebar(); // Click karne par sidebar band ho jaye
+}
   deletePatient(id: number) { if (confirm('Are you sure you want to delete this patient?')) {this.patients.update(patients => patients.filter(p => p.id !== id));}}
   applyTheme() {
     const theme = this.currentTheme();
@@ -53,6 +67,11 @@ export class PatientComponent implements OnInit {
     document.documentElement.style.setProperty('--theme-light', theme.light);
     document.documentElement.style.setProperty('--theme-hover', theme.hover);
   }
-
-  ngOnInit() {if (isPlatformBrowser(this.platformId)) {this.applyTheme();}}
+  onLogout() {this.authService.logout();this.router.navigate(['/login']); }
+  ngOnInit() {if (isPlatformBrowser(this.platformId)) {this.applyTheme();
+     this.loginName = localStorage.getItem('loginName');
+     this.specialization = localStorage.getItem('doctorSpecilization');
+     this.role = localStorage.getItem('userRole');
+  }}
+  getAvatarUrl(name: string): string {if (!name) {return 'https://ui-avatars.com/api/?name=U&background=667eea&color=fff';} return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=667eea&color=fff`;}
 }

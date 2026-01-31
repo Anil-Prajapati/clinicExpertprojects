@@ -1,12 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import {FormBuilder,FormGroup,FormsModule,ReactiveFormsModule,} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-appointment',
@@ -23,7 +19,7 @@ export class AppointmentComponent  implements OnInit{
     { id: 2, name: 'Dr. B' },
   ];
 
-  constructor(private fb: FormBuilder, private route: ActivatedRoute,private router: Router) {}
+  constructor(private fb: FormBuilder, private route: ActivatedRoute,private router: Router,private location: Location) {}
 
   ngOnInit(): void {
     this.showQR = !this.route.snapshot.queryParamMap.has('scan');
@@ -40,8 +36,6 @@ export class AppointmentComponent  implements OnInit{
     });
   }
 
-  submit() {
-    console.log(this.appointmentForm.value);
-  }
-  goToHome():void {this.router.navigate(['/']); }
+  submit() {console.log(this.appointmentForm.value);}
+  goBack(): void {this.location.back();}
 }

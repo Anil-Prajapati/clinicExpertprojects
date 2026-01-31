@@ -146,3 +146,70 @@
 .ping { width: 10px; height: 10px; background: #00ffcc; border-radius: 50%; display: inline-block; margin-right: 8px; position: relative;}
 .ping:after { content: ''; position: absolute; width: 100%; height: 100%; background: #00ffcc; border-radius: 50%; animation: pulse 1.5s infinite;}
 @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }
+/* Container adjustment */
+.back-navigation {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+/* Unique Styled Glass Button */
+.glass-back-btn {
+    position: relative; /* Shimmer effect ke liye */
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 22px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px) saturate(180%);
+    -webkit-backdrop-filter: blur(15px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 100px; /* Pill shape */
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    overflow: hidden; /* Shimmer ko andar rakhne ke liye */
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Icon Styling */
+.glass-back-btn i {
+    font-size: 1.3rem;
+    line-height: 0;
+    transition: transform 0.3s ease;
+}
+
+/* Hover State */
+.glass-back-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: #ffffff !important;
+    transform: translateX(-8px); /* Thoda zyada slide unique feel ke liye */
+    box-shadow: -10px 10px 25px rgba(0, 0, 0, 0.3), 
+                inset 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.glass-back-btn:hover i {
+    transform: scale(1.2) rotate(-10deg); /* Icon halka sa tilt hoga */
+}
+
+/* Unique Shimmer Animation (The Magic Touch) */
+.glass-back-btn::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 20%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(30deg);
+    transition: all 0.6s ease;
+}
+
+.glass-back-btn:hover::after {
+    left: 120%; /* Hover par chamak move karegi */
+}

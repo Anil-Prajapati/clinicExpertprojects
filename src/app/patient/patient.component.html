@@ -11,7 +11,6 @@
           <div class="logo-box me-2">
             <img src="assets/Images/logo.png" alt="Appointment Scheduling" class="logo-png" style="width:100px;height:auto">
           </div>
-          <span class="fw-bold text-white fs-5">ClinicExpert</span>&nbsp;&nbsp;
         </div>
         <button class="btn btn-sm theme-toggle" (click)="toggleThemeMenu()" title="Change Theme">
           <i class="bi bi-palette-fill"></i>
@@ -22,7 +21,6 @@
     <!-- Theme Selector -->
     <div class="theme-menu" [class.show]="showThemeMenu()">
       <div class="p-3">
-        <small class="text-white-50 text-uppercase fw-bold d-block mb-3">Choose Theme Color</small>
         <div class="theme-colors">
           <button 
             *ngFor="let theme of themes" 
@@ -88,12 +86,15 @@
             <i class="bi bi-bell fs-5"></i>
             <span class="notification-badge">3</span>
           </button>
+           <button class="icon-btn logout-style" (click)="onLogout()" title="Logout">
+                <i class="bi bi-box-arrow-right"></i>
+            </button>
           <div class="vr d-none d-md-block"></div>
           <div class="me-2 text-end d-none d-md-block">
-            <div class="fw-bold small mb-0">Dr. Sandeep Singh</div>
-            <span class="extra-small fw-semibold" style="color: var(--theme-primary)">Administrator</span>
+            <div class="fw-bold small mb-0">{{loginName}}</div>
+            <span class="extra-small fw-semibold" style="color: var(--theme-primary)">{{role}}</span>
           </div>
-          <div class="profile-avatar shadow-sm">SS</div>
+          <img [src]="getAvatarUrl(loginName || '')" class="rounded-3 shadow-sm border" style="width: 40px; height: 40px;"/>
         </div>
       </div>
     </nav>

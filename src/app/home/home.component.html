@@ -15,15 +15,13 @@
   <!-- Navbar -->
   <nav class="navbar">
     <div class="nav-content">
-      <div class="logo"><img src="assets/Images/logo.png" alt="Logo" class="logo-png"> ClinicExpert</div>
+      <div class="logo"><img src="assets/Images/logo.png" alt="Logo" class="logo-png">ClinicExpert</div>
       <button class="mobile-menu-btn" (click)="isMenuOpen = !isMenuOpen">{{ isMenuOpen ? '✕' : '☰' }}</button>
       <div class="nav-links" [class.active]="isMenuOpen">
         <a routerLink="/" (click)="isMenuOpen = false">Home</a>
         <a routerLink="/plans" (click)="isMenuOpen = false">Plans</a>
         <a routerLink="/login" (click)="isMenuOpen = false">Login</a>
-        <a routerLink="/appointment" (click)="isMenuOpen = false">Appointment</a>
         <a routerLink="/inventory" (click)="isMenuOpen = false">Inventory</a>
-  
         <div class="nav-actions" style="display: contents;">
           <button class="theme-toggle-btn" (click)="toggleTheme()">✨</button>
           <a routerLink="/trial" class="btn-trial" (click)="isMenuOpen = false">Free Trial</a>

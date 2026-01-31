@@ -1,4 +1,3 @@
-import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
@@ -7,23 +6,18 @@ import { AdminComponent } from './admin/admin.component';
 import { DoctorComponent } from './doctor/doctor.component';
 import { PatientComponent } from './patient/patient.component';
 import { AppointmentComponent } from './appointment/appointment.component';
-import { NgModule } from '@angular/core';
 import { InventoryComponent } from './inventory/inventory.component';
+import { authGuard } from './core/core/guards/auth.guard';
+import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'registration', component: RegistrationComponent },
-  { path: 'admin', component: AdminComponent },
-  { path: 'doctor', component: DoctorComponent },
-  { path: 'patient', component: PatientComponent },
+  { path: 'admin', component: AdminComponent, canActivate: [authGuard], data: { roles: ['ADMIN'] } },
+  { path: 'doctor', component: DoctorComponent, canActivate:[authGuard], data:{roles:['DOCTOR']} },
+  { path: 'patient', component: PatientComponent, canActivate:[authGuard], data:{roles:['PATIENT']} },
   { path: 'plans', component: PlansComponent },
-  { path: 'appointment', component: AppointmentComponent },
+  { path: 'appointment', component: AppointmentComponent, canActivate: [authGuard], data: { roles: ['ADMIN', 'DOCTOR', 'PATIENT'] } },
   { path: 'inventory', component: InventoryComponent }
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes, { useHash: true })],
-  exports: [RouterModule]
-})
-export class AppRoutingModule { }

@@ -1,15 +1,10 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, inject, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { Chart } from 'chart.js/auto';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
+import { AuthService } from '../core/core/services/auth.service';
 
-interface ThemeColor {
-  name: string;
-  primary: string;
-  secondary: string;
-  gradient: string;
-  light: string;
-}
-
+interface ThemeColor {name: string;primary: string;secondary: string;gradient: string;light: string;}
 @Component({
   selector: 'app-doctor',
   standalone: true,
@@ -21,6 +16,10 @@ export class DoctorComponent implements OnInit {
   public chart: any;
   isSidebarOpen = false;
   selectedTheme = 'ocean';
+  private router = inject(Router); 
+  loginName: string | null = '';
+  specialization: string | null = '';
+  role: string | null = ''; 
 
   themes: ThemeColor[] = [
     {
@@ -77,10 +76,13 @@ export class DoctorComponent implements OnInit {
     { title: 'Next Appointments', value: '0', icon: 'bi-calendar-plus', color: 'info', bg: '#e0f7fa' }
   ];
 
-  constructor(@Inject(PLATFORM_ID) private platformId: any) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: any, public authService:AuthService) {}
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
+      this.loginName = localStorage.getItem('loginName');
+      this.specialization = localStorage.getItem('doctorSpecilization');
+      this.role = localStorage.getItem('userRole');
       setTimeout(() => {
         this.createChart();
         this.applyTheme();
@@ -115,7 +117,8 @@ export class DoctorComponent implements OnInit {
       this.isSidebarOpen = false;
     }
   }
-
+  onLogout() {this.authService.logout();this.router.navigate(['/login']); }
+  getAvatarUrl(name: string): string {if (!name) {return 'https://ui-avatars.com/api/?name=U&background=667eea&color=fff';}return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=667eea&color=fff`;}
   createChart() {
     const canvas = document.getElementById('appointmentChart') as HTMLCanvasElement;
     if (!canvas) return;

@@ -1,0 +1,75 @@
+<div id="particles-js" class="particles-bg"></div>
+<div class="content-wrapper">
+  <div class="container-fluid">
+    <div class="text-center animate__animated animate__fadeIn">
+      <h2 class="display-5 fw-bold mb-2 main-heading">Your Health, <span class="text-gradient">Our Priority</span></h2>
+      <p class="text-muted lead mx-auto" style="max-width: 600px;">
+        Find and book appointments with the city's top-rated specialists in just a few clicks.
+      </p>
+       <div class="back-nav">
+      <button class="btn-back" (click)="goBack()">
+        <i class="fas fa-arrow-left me-2"></i> Back Home
+      </button>
+    </div>
+      <div class="heading-underline mx-auto"></div>
+    </div>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-3 mt-1" *ngIf="doctorList && doctorList.length > 0">
+      <div class="col" *ngFor="let doctor of doctorList">
+        
+        <div class="card h-100 border-0 shadow-lg position-relative overflow-hidden doctor-card">
+          <span class="badge position-absolute top-0 end-0 m-3 py-2 px-3 status-badge" 
+                [ngClass]="doctor.status === 'ACTIVE' ? 'bg-success' : 'bg-danger'">
+            {{ doctor.status }}
+          </span>
+
+          <div class="text-center profile-header py-4">
+            <div class="doctor-img-container mx-auto shadow">
+               <img src="https://cdn-icons-png.flaticon.com/512/387/387561.png" 
+                    alt="Doctor" class="img-fluid">
+            </div>
+          </div>
+
+          <div class="card-body px-4">
+            <h5 class="card-title text-center fw-bold mb-1 text-dark">{{ doctor.fullName }}</h5>
+            <p class="text-primary text-center small mb-3 fw-bold text-uppercase letter-spacing-1">
+              <i class="fas fa-stethoscope me-1"></i> {{ doctor.doctorSpecialization }}
+            </p>
+
+            <div class="info-list border-top pt-3">
+              <div class="info-item d-flex justify-content-between mb-2">
+                <span class="text-secondary small"><i class="fas fa-graduation-cap me-2"></i>Degree</span>
+                <span class="fw-bold text-dark small">{{ doctor.doctorQualification }}</span>
+              </div>
+              <div class="info-item d-flex justify-content-between mb-2">
+                <span class="text-secondary small"><i class="fas fa-history me-2"></i>Experience</span>
+                <span class="badge bg-light text-dark fw-bold border">{{ doctor.doctorExperience }}</span>
+              </div>
+              <div class="info-item d-flex justify-content-between">
+                <span class="text-secondary small"><i class="fas fa-clock me-2"></i>Available</span>
+                <span class="fw-bold text-success extra-small">
+                  {{ doctor.doctorAvailableFrom }} - {{ doctor.doctorAvailableTo }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-footer bg-white border-0 p-4 pt-0">
+            <button class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow-sm book-btn mt-3" 
+                    (click)="onBookAppointment(doctor)">
+              Book Appointment
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="text-center py-5" *ngIf="doctorList && doctorList.length === 0">
+      <div class="spinner-border text-light" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="text-white mt-3">Fetching amazing doctors for you...</p>
+    </div>
+
+  </div>
+</div>

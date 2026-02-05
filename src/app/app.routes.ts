@@ -9,6 +9,7 @@ import { AppointmentComponent } from './appointment/appointment.component';
 import { InventoryComponent } from './inventory/inventory.component';
 import { authGuard } from './core/core/guards/auth.guard';
 import { Routes } from '@angular/router';
+import { DoctorListComponent } from './doctor-list/doctor-list.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -19,5 +20,6 @@ export const routes: Routes = [
   { path: 'patient', component: PatientComponent, canActivate:[authGuard], data:{roles:['PATIENT']} },
   { path: 'plans', component: PlansComponent },
   { path: 'appointment', component: AppointmentComponent, canActivate: [authGuard], data: { roles: ['ADMIN', 'DOCTOR', 'PATIENT'] } },
+  { path: 'doctor-list', component: DoctorListComponent, canActivate: [authGuard], data: { roles: ['ADMIN', 'DOCTOR', 'PATIENT'] } },
   { path: 'inventory', component: InventoryComponent }
 ];

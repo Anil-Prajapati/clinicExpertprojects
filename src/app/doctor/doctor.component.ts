@@ -1,4 +1,4 @@
-import { Component, inject, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { Chart } from 'chart.js/auto';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
@@ -20,103 +20,48 @@ export class DoctorComponent implements OnInit {
   loginName: string | null = '';
   specialization: string | null = '';
   role: string | null = ''; 
+  doctorId:string | null = '';
+  notifications: any[] = [];    
+  unreadCount: number = 0;      
+  showNotificationDropdown = false; 
+  private notificationInterval: any;
 
-  themes: ThemeColor[] = [
-    {
-      name: 'ocean',
-      primary: '#4e73df',
-      secondary: '#224abe',
-      gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      light: 'rgba(78, 115, 223, 0.1)'
-    },
-    {
-      name: 'sunset',
-      primary: '#f093fb',
-      secondary: '#f5576c',
-      gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-      light: 'rgba(245, 87, 108, 0.1)'
-    },
-    {
-      name: 'forest',
-      primary: '#11998e',
-      secondary: '#38ef7d',
-      gradient: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
-      light: 'rgba(17, 153, 142, 0.1)'
-    },
-    {
-      name: 'purple',
-      primary: '#a044ff',
-      secondary: '#6a3093',
-      gradient: 'linear-gradient(135deg, #a044ff 0%, #6a3093 100%)',
-      light: 'rgba(160, 68, 255, 0.1)'
-    },
-    {
-      name: 'fire',
-      primary: '#fa709a',
-      secondary: '#fee140',
-      gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-      light: 'rgba(250, 112, 154, 0.1)'
-    }
-  ];
-
-  menuItems = [
-    { label: 'Dashboard', icon: 'bi bi-grid-fill', active: true },
-    { label: 'Appointments', icon: 'bi bi-calendar3', active: false },
-    { label: 'Transactions', icon: 'bi bi-cash-stack', active: false },
-    { label: 'My Schedule', icon: 'bi bi-clock', active: false },
-    { label: 'Visits', icon: 'bi bi-person-badge', active: false },
-    { label: 'Live Consultations', icon: 'bi bi-camera-video', active: false },
-    { label: 'Holiday', icon: 'bi bi-calendar-x', active: false },
-    { label: 'Medicines', icon: 'bi bi-capsule', active: false },
-  ];
-
-  stats = [
-    { title: 'Total Appointments', value: '2', icon: 'bi-file-earmark-text', color: 'primary', bg: '#e3f2fd' },
-    { title: 'Today Appointments', value: '0', icon: 'bi-calendar-check', color: 'success', bg: '#e8f5e9' },
-    { title: 'Next Appointments', value: '0', icon: 'bi-calendar-plus', color: 'info', bg: '#e0f7fa' }
-  ];
-
-  constructor(@Inject(PLATFORM_ID) private platformId: any, public authService:AuthService) {}
+  themes: ThemeColor[] = [{name: 'ocean',primary: '#4e73df',secondary: '#224abe',gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',light: 'rgba(78, 115, 223, 0.1)'},{name: 'sunset',primary: '#f093fb',secondary: '#f5576c',gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',light: 'rgba(245, 87, 108, 0.1)'},{name: 'forest',primary: '#11998e',secondary: '#38ef7d',gradient: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',light: 'rgba(17, 153, 142, 0.1)'},{name: 'purple',primary: '#a044ff',secondary: '#6a3093',gradient: 'linear-gradient(135deg, #a044ff 0%, #6a3093 100%)',light: 'rgba(160, 68, 255, 0.1)'},{name: 'fire',primary: '#fa709a',secondary: '#fee140',gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',light: 'rgba(250, 112, 154, 0.1)'}];
+  menuItems = [{ label: 'Dashboard', icon: 'bi bi-grid-fill', active: true },{ label: 'Appointments', icon: 'bi bi-calendar3', active: false },{ label: 'Transactions', icon: 'bi bi-cash-stack', active: false },{ label: 'My Schedule', icon: 'bi bi-clock', active: false },{ label: 'Visits', icon: 'bi bi-person-badge', active: false },{ label: 'Live Consultations', icon: 'bi bi-camera-video', active: false },{ label: 'Holiday', icon: 'bi bi-calendar-x', active: false },{ label: 'Medicines', icon: 'bi bi-capsule', active: false },];
+  stats = [{ title: 'Total Appointments', value: '2', icon: 'bi-file-earmark-text', color: 'primary', bg: '#e3f2fd' }, { title: 'Today Appointments', value: '0', icon: 'bi-calendar-check', color: 'success', bg: '#e8f5e9' },{ title: 'Next Appointments', value: '0', icon: 'bi-calendar-plus', color: 'info', bg: '#e0f7fa' }];
+  constructor(@Inject(PLATFORM_ID) private platformId: any, public authService:AuthService,private eRef: ElementRef) {}
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.loginName = localStorage.getItem('loginName');
       this.specialization = localStorage.getItem('doctorSpecilization');
       this.role = localStorage.getItem('userRole');
+      this.doctorId = localStorage.getItem('doctorId')
       setTimeout(() => {
         this.createChart();
         this.applyTheme();
       }, 0);
+
+      this.refreshNotifications();
+
+      this.notificationInterval = setInterval(() => {
+        this.refreshNotifications();
+      }, 30000);
     }
   }
-
-  toggleSidebar() {
-    this.isSidebarOpen = !this.isSidebarOpen;
-  }
-
-  changeTheme(themeName: string) {
-    this.selectedTheme = themeName;
-    this.applyTheme();
-  }
-
-  applyTheme() {
-    const theme = this.themes.find(t => t.name === this.selectedTheme);
-    if (theme) {
-      document.documentElement.style.setProperty('--theme-primary', theme.primary);
-      document.documentElement.style.setProperty('--theme-secondary', theme.secondary);
-      document.documentElement.style.setProperty('--theme-gradient', theme.gradient);
-      document.documentElement.style.setProperty('--theme-light', theme.light);
-    }
-  }
-
-  setActiveMenu(index: number) {
-    this.menuItems.forEach((item, i) => {
-      item.active = i === index;
-    });
-    if (window.innerWidth < 992) {
-      this.isSidebarOpen = false;
-    }
-  }
+  ngOnDestroy() {if (this.notificationInterval) {clearInterval(this.notificationInterval);}}
+  refreshNotifications() {this.loadUnreadCount();this.loadUnreadNotifications();}
+  loadUnreadNotifications() {if (!this.doctorId) return;this.authService.getNotifications(this.doctorId).subscribe({next: (data: any[]) => {this.notifications = data.filter(n => !n.read);},error: (err) => console.error(err)});}
+  markAllAsRead() {if (!this.doctorId || this.unreadCount === 0) return;this.authService.markAllNotificationsAsRead(this.doctorId).subscribe({next: () => {this.notifications = []; this.unreadCount = 0; this.showNotificationDropdown = false; },error: (err) => console.error(err)});}
+  markSingleAsRead(notificationId: number) {this.authService.markSingleNotificationAsRead(notificationId).subscribe({next: () => {this.refreshNotifications();}, error: (err) => console.error(err)});}
+  loadUnreadCount() {if (!this.doctorId) return;this.authService.getUnreadCount(this.doctorId).subscribe({next: (count) => {this.unreadCount = count;},error: (err) => console.error(err)});}
+  toggleSidebar() { this.isSidebarOpen = !this.isSidebarOpen;}
+  changeTheme(themeName: string) {this.selectedTheme = themeName;this.applyTheme();}
+  applyTheme() {const theme = this.themes.find(t => t.name === this.selectedTheme);if (theme) {document.documentElement.style.setProperty('--theme-primary', theme.primary);document.documentElement.style.setProperty('--theme-secondary', theme.secondary);document.documentElement.style.setProperty('--theme-gradient', theme.gradient);document.documentElement.style.setProperty('--theme-light', theme.light);}}
+  setActiveMenu(index: number) {this.menuItems.forEach((item, i) => {item.active = i === index;});if (window.innerWidth < 992) {this.isSidebarOpen = false;}}
+  toggleNotifications() {this.showNotificationDropdown = !this.showNotificationDropdown;if (this.showNotificationDropdown) {this.markAllAsRead();}}
+  @HostListener('document:click', ['$event'])
+  clickout(event: any) {if (!this.eRef.nativeElement.contains(event.target)) {this.showNotificationDropdown = false;}}
   onLogout() {this.authService.logout();this.router.navigate(['/login']); }
   getAvatarUrl(name: string): string {if (!name) {return 'https://ui-avatars.com/api/?name=U&background=667eea&color=fff';}return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=667eea&color=fff`;}
   createChart() {

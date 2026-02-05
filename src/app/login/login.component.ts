@@ -19,6 +19,7 @@ export class LoginComponent implements OnInit {
   isLoading: boolean = false;
   loginName:string ='';
   doctorSpecilization:string ='';
+  doctorId:string = '';
   loginData = {clinicEmail: '',clinicContact: '',clinicPassword: '', rememberMe: false,};
   constructor(private router: Router,private authService: AuthService,@Inject(PLATFORM_ID) private platformId: any) {}
   ngOnInit(): void {if (isPlatformBrowser(this.platformId)) {this.loadParticles();}}
@@ -38,11 +39,13 @@ export class LoginComponent implements OnInit {
         const token = res?.response_identifier?.token;
         const loginName= res?.response_identifier?.doctor_full_name || res?.response_identifier?.clinic_name || res?.response_identifier?.patient_name ||'';
         const doctorSpecilization = res?.response_datas?.doctor_specialization || '';
+        const doctorId = res?.response_identifier.doctor_id;
         if (role && token) {
           localStorage.setItem('token', token);
           localStorage.setItem('userRole', role);
           localStorage.setItem('loginName', loginName);
           localStorage.setItem('doctorSpecilization', doctorSpecilization);
+          localStorage.setItem('doctorId',doctorId);
           this.redirectUser(role);
         } else {
           this.isLoading = false;

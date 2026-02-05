@@ -2,14 +2,15 @@
 <div class="d-flex" id="wrapper">
   <!-- Overlay for mobile -->
   <div class="sidebar-overlay" [class.show]="sidebarOpen()" (click)="closeSidebar()"></div>
-  
+
   <!-- Sidebar -->
   <aside class="sidebar shadow-lg" id="sidebar-wrapper" [class.show]="sidebarOpen()">
     <div class="sidebar-heading border-bottom p-4">
       <div class="d-flex align-items-center justify-content-between">
         <div class="d-flex align-items-center">
           <div class="logo-box me-2">
-            <img src="assets/Images/logo.png" alt="Appointment Scheduling" class="logo-png" style="width:100px;height:auto">
+            <img src="assets/Images/logo.png" alt="Appointment Scheduling" class="logo-png"
+              style="width:100px;height:auto">
           </div>
         </div>
         <button class="btn btn-sm theme-toggle" (click)="toggleThemeMenu()" title="Change Theme">
@@ -22,13 +23,8 @@
     <div class="theme-menu" [class.show]="showThemeMenu()">
       <div class="p-3">
         <div class="theme-colors">
-          <button 
-            *ngFor="let theme of themes" 
-            class="theme-btn"
-            [class.active]="selectedTheme() === theme.name"
-            [style.background]="theme.gradient"
-            (click)="changeTheme(theme.name)"
-            [title]="theme.name">
+          <button *ngFor="let theme of themes" class="theme-btn" [class.active]="selectedTheme() === theme.name"
+            [style.background]="theme.gradient" (click)="changeTheme(theme.name)" [title]="theme.name">
             <i class="bi bi-check-lg"></i>
           </button>
         </div>
@@ -36,24 +32,20 @@
     </div>
 
     <div class="list-group list-group-flush p-3">
-      <a class="nav-item mb-2" 
-         [class.active]="activeNav() === 'dashboard'"
-         (click)="setActiveNav('dashboard'); closeSidebar()">
+      <a class="nav-item mb-2" [class.active]="activeNav() === 'dashboard'"
+        (click)="setActiveNav('dashboard'); closeSidebar()">
         <i class="bi bi-grid-1x2-fill me-3"></i>Dashboard
       </a>
-      <a class="nav-item mb-2" 
-         [class.active]="activeNav() === 'patients'"
-         (click)="setActiveNav('patients'); closeSidebar()">
+      <a class="nav-item mb-2" [class.active]="activeNav() === 'patients'"
+        (click)="setActiveNav('patients'); closeSidebar()">
         <i class="bi bi-people me-3"></i>Patients
       </a>
-      <a class="nav-item mb-2" 
-         [class.active]="activeNav() === 'appointments'"
-         (click)="setActiveNav('appointments'); closeSidebar()">
-        <i class="bi bi-calendar-check me-3"></i>Appointments
+      <a *ngIf="role === 'ROLE_PATIENT' || role === 'PATIENT'" class="nav-item mb-2"
+        [class.active]="activeNav() === 'doctor-list'" (click)="setActiveNav('doctor-list'); closeSidebar()">
+        <i class="bi bi-person-badge-fill me-3"></i>Appointments
       </a>
-      <a class="nav-item mb-2" 
-         [class.active]="activeNav() === 'settings'"
-         (click)="setActiveNav('settings'); closeSidebar()">
+      <a class="nav-item mb-2" [class.active]="activeNav() === 'settings'"
+        (click)="setActiveNav('settings'); closeSidebar()">
         <i class="bi bi-gear me-3"></i>Settings
       </a>
     </div>
@@ -86,15 +78,16 @@
             <i class="bi bi-bell fs-5"></i>
             <span class="notification-badge">3</span>
           </button>
-           <button class="icon-btn logout-style" (click)="onLogout()" title="Logout">
-                <i class="bi bi-box-arrow-right"></i>
-            </button>
+          <button class="icon-btn logout-style" (click)="onLogout()" title="Logout">
+            <i class="bi bi-box-arrow-right"></i>
+          </button>
           <div class="vr d-none d-md-block"></div>
           <div class="me-2 text-end d-none d-md-block">
             <div class="fw-bold small mb-0">{{loginName}}</div>
             <span class="extra-small fw-semibold" style="color: var(--theme-primary)">{{role}}</span>
           </div>
-          <img [src]="getAvatarUrl(loginName || '')" class="rounded-3 shadow-sm border" style="width: 40px; height: 40px;"/>
+          <img [src]="getAvatarUrl(loginName || '')" class="rounded-3 shadow-sm border"
+            style="width: 40px; height: 40px;" />
         </div>
       </div>
     </nav>
@@ -105,7 +98,7 @@
       <div class="row align-items-center mb-4 g-3">
         <div class="col-lg-6">
           <h2 class="fw-bold text-dark m-0 d-flex align-items-center">
-            Patient Directory 
+            Patient Directory
             <span class="badge rounded-pill ms-3 fs-6 theme-badge">
               <i class="bi bi-people-fill me-1"></i>
               {{filteredPatients().length}} Total
@@ -116,12 +109,8 @@
         <div class="col-lg-6">
           <div class="search-container d-flex align-items-center bg-white shadow-sm rounded-pill p-1 border">
             <i class="bi bi-search ms-3 text-muted"></i>
-            <input 
-              type="text" 
-              class="form-control border-0 shadow-none px-3 py-2 bg-transparent" 
-              placeholder="Search by patient name..." 
-              [ngModel]="searchTerm()" 
-              (ngModelChange)="searchTerm.set($event)">
+            <input type="text" class="form-control border-0 shadow-none px-3 py-2 bg-transparent"
+              placeholder="Search by patient name..." [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)">
             <button class="btn btn-primary rounded-pill px-4 me-1">
               <i class="bi bi-plus-lg me-1"></i> Add New
             </button>
@@ -262,8 +251,7 @@
                   </div>
                 </td>
                 <td>
-                  <span 
-                    class="badge rounded-pill px-3 py-2 fw-medium border" 
+                  <span class="badge rounded-pill px-3 py-2 fw-medium border"
                     [ngClass]="p.status === 'Critical' ? 'bg-danger-subtle text-danger border-danger' : 'bg-success-subtle text-success border-success'">
                     <i class="bi" [ngClass]="p.status === 'Critical' ? 'bi-exclamation-circle' : 'bi-check-circle'"></i>
                     {{p.status}}

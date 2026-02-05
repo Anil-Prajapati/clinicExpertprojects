@@ -45,47 +45,51 @@
             <div class="row">
               <div class="col-md-6 mb-4">
                 <label class="modern-label">Phone Number</label>
-                <input formControlName="phone" class="modern-input" placeholder="+91 00000 00000">
+                <input formControlName="patientContact" class="modern-input" placeholder="+91 00000 00000">
               </div>
+              
               <div class="col-md-6 mb-4">
                 <label class="modern-label">Gender</label>
                 <select formControlName="gender" class="modern-select">
-                  <option selected disabled>Choose...</option>
-                  <option>Male</option>
-                  <option>Female</option>
-                  <option>Other</option>
+                  <option value="" selected disabled>Choose...</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
             </div>
 
             <div class="mb-4">
-              <label class="modern-label">Specialist / Doctor</label>
-              <select formControlName="doctor" class="modern-select">
-                <option selected disabled>Select a doctor</option>
-                <option *ngFor="let doc of doctors" [value]="doc.id">{{ doc.name }}</option>
-              </select>
+              <label class="modern-label">Doctor</label>
+              <input type="text" class="modern-input" [value]="doctorName" readonly />
             </div>
 
             <div class="row">
-              <div class="col-md-6 mb-4">
+              <div class="col-md-4 mb-4">
                 <label class="modern-label">Date</label>
-                <input type="date" formControlName="date" class="modern-input">
+                <input type="date" formControlName="appointmentDate" class="modern-input">
               </div>
-              <div class="col-md-6 mb-4">
-                <label class="modern-label">Time Slot</label>
-                <input type="time" formControlName="time" class="modern-input">
+              
+              <div class="col-md-4 mb-4">
+                <label class="modern-label">Hour (24h)</label>
+                <input type="number" formControlName="hour" class="modern-input" placeholder="HH" min="0" max="23">
+              </div>
+
+              <div class="col-md-4 mb-4">
+                <label class="modern-label">Minute</label>
+                <input type="number" formControlName="minute" class="modern-input" placeholder="MM" min="0" max="59">
               </div>
             </div>
 
             <div class="visit-toggle mb-4">
-              <input type="radio" name="vType" id="newV" checked>
+              <input type="radio" formControlName="appointmentType" value="New" id="newV">
               <label for="newV" class="toggle-btn">New Patient</label>
 
-              <input type="radio" name="vType" id="followV">
+              <input type="radio" formControlName="appointmentType" value="Follow-Up" id="followV">
               <label for="followV" class="toggle-btn">Follow-Up</label>
             </div>
 
-            <button type="submit" class="modern-btn">
+            <button type="submit" class="modern-btn" [disabled]="appointmentForm.invalid">
               <span>Confirm Booking</span>
               <span class="arrow">→</span>
             </button>

@@ -7,7 +7,8 @@
       <div class="d-flex align-items-center justify-content-between p-3 border-bottom"
         style="height: 70px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
         <div class="d-flex align-items-center gap-2 text-white text-truncate">
-          <div class="bg-white bg-opacity-25 rounded p-2"><img src="assets/Images/logo.png" alt="Appointment Scheduling" class="logo-png" style="width:100px;height:auto"></div>
+          <div class="bg-white bg-opacity-25 rounded p-2"><img src="assets/Images/logo.png" alt="Appointment Scheduling"
+              class="logo-png" style="width:100px;height:auto"></div>
           <h5 class="m-0 fw-bold">ClinicExpert</h5>
         </div>
         <button class="btn text-white d-lg-none" (click)="toggleSidebar()"><i class="bi bi-x-lg"></i></button>
@@ -45,20 +46,77 @@
           </div>
 
           <div class="d-flex align-items-center gap-3 ms-auto">
-            <div class="position-relative p-2 bg-light rounded-3">
+            <div class="position-relative p-2 bg-light rounded-3 cursor-pointer" (click)="toggleNotifications()"
+              style="cursor: pointer;">
+
               <i class="bi bi-bell fs-5"></i>
-              <span
-                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white">2</span>
+
+              <span *ngIf="unreadCount > 0"
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white">
+                {{ unreadCount }}
+              </span>
+
+              <div *ngIf="showNotificationDropdown" class="position-absolute end-0 mt-3 card shadow-lg border-0"
+                style="width: 300px; z-index: 1100; top: 100%; cursor: default;" (click)="$event.stopPropagation()">
+                <div class="card-header bg-white fw-bold d-flex justify-content-between align-items-center py-3">
+                  Notifications
+                  <span *ngIf="unreadCount > 0" class="badge bg-primary rounded-pill">{{unreadCount}} New</span>
+                </div>
+
+                <div class="list-group list-group-flush overflow-auto" style="max-height: 300px;">
+                  <div *ngIf="notifications.length === 0" class="p-4 text-center text-muted">
+                    <i class="bi bi-bell-slash d-block fs-3 mb-2"></i>
+                    <small>No new appointments</small>
+                  </div>
+
+                <div *ngFor="let note of notifications"
+     class="list-group-item list-group-item-action p-3 border-bottom position-relative notification-item"
+     style="cursor: pointer; transition: all 0.3s ease;"
+     (click)="markSingleAsRead(note.id)">
+
+  <div class="d-flex gap-3">
+    <div class="bg-primary bg-opacity-10 p-2 rounded-circle text-primary d-flex align-items-center justify-content-center" 
+         style="width: 40px; height: 40px; flex-shrink: 0;">
+      <i class="bi bi-calendar-check-fill fs-6"></i>
+    </div>
+
+    <div class="overflow-hidden flex-grow-1">
+      <div class="d-flex justify-content-between align-items-start">
+        <p class="mb-0 small fw-bold text-dark text-truncate" style="max-width: 180px;">
+          {{note.title}}
+        </p>
+        <i class="bi bi-x text-muted fs-5 line-height-1"></i>
+      </div>
+
+      <p class="mb-1 small text-muted lh-sm" style="font-size: 0.8rem;">
+        {{note.message}}
+      </p>
+
+      <div class="d-flex align-items-center gap-2 mt-1">
+        <i class="bi bi-clock text-primary" style="font-size: 0.7rem;"></i>
+        <small class="text-primary fw-medium" style="font-size: 0.7rem;">
+          {{ note.createdAt | date:'MMM d, h:mm a' }}
+        </small>
+      </div>
+    </div>
+  </div>
+</div>
+                </div>
+                <div *ngIf="notifications.length > 0" class="card-footer bg-light text-center py-2">
+                  <small class="text-primary fw-bold cursor-pointer" (click)="markAllAsRead()">Mark all as read</small>
+                </div>
+              </div>
             </div>
             <button class="icon-btn logout-style" (click)="onLogout()" title="Logout">
-                <i class="bi bi-box-arrow-right"></i>
+              <i class="bi bi-box-arrow-right"></i>
             </button>
             <div class="d-flex align-items-center gap-2 ps-3 border-start ms-2">
               <div class="text-end d-none d-md-block">
                 <div class="fw-bold small">{{loginName}}</div>
                 <small class="text-muted small">{{specialization}}</small>
               </div>
-              <img [src]="getAvatarUrl(loginName || '')" class="rounded-3 shadow-sm border" style="width: 40px; height: 40px;"/>
+              <img [src]="getAvatarUrl(loginName || '')" class="rounded-3 shadow-sm border"
+                style="width: 40px; height: 40px;" />
             </div>
           </div>
         </div>

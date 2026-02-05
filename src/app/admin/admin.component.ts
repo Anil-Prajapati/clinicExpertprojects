@@ -1,5 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Inject, inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../core/core/services/auth.service';
@@ -26,7 +26,7 @@ export class AdminComponent implements OnInit {
   specialization: string | null = '';
   role: string | null = ''; 
 
-  constructor(public authService: AuthService,private router: Router) {}
+  constructor(public authService: AuthService,private router: Router,@Inject(PLATFORM_ID) private platformId: Object) {}
   statCards: StatCard[] = [
     { title: 'Total Patients', value: '1,548', icon: 'people' },
     { title: 'Consultation', value: '448', icon: 'chat-dots' },
@@ -75,11 +75,7 @@ export class AdminComponent implements OnInit {
     { day: 'Fri', date: '2nd', isActive: false }
   ];
 
-  ngOnInit(): void {this.loadDashboardData();
-    this.loginName = localStorage.getItem('loginName');
-    this.specialization = localStorage.getItem('doctorSpecilization');
-    this.role = localStorage.getItem('userRole');
-  }
+  ngOnInit(): void {this.loadDashboardData();if (isPlatformBrowser(this.platformId)) {this.loginName = localStorage.getItem('loginName');this.specialization = localStorage.getItem('doctorSpecilization');this.role = localStorage.getItem('userRole');}}
   getAvatarUrl(name: string | undefined | null): string {
   const n = (name || '').trim().replace(/^dr\.?\s*/i, '');
   return `https://ui-avatars.com/api/?name=${(n[0] || 'U').toUpperCase()}&background=667eea&color=fff`;}

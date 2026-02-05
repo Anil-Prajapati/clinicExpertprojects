@@ -21,11 +21,10 @@ export class PatientComponent implements OnInit {
   activeNav = signal('dashboard');
   sidebarOpen = signal(false);
   private router = inject(Router); 
-  private TOKEN_KEY = 'access_token';
-  private ROLE_KEY = 'userRole';
   loginName: string | null = '';
   specialization: string | null = '';
   role: string | null = ''; 
+  doctorList: any[] = [];
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object,public authService:AuthService) {}
 
@@ -51,13 +50,7 @@ export class PatientComponent implements OnInit {
   toggleThemeMenu() {this.showThemeMenu.update(v => !v);}
   toggleSidebar() {this.sidebarOpen.update(v => !v); }
   closeSidebar() {this.sidebarOpen.set(false);}
-  setActiveNav(nav: string) {
-  this.activeNav.set(nav); // Jo nav pass ho wahi set ho
-  if (nav === 'appointments') {
-    this.router.navigate(['/appointment']); // Route 'appointment' hai
-  }
-  this.closeSidebar(); // Click karne par sidebar band ho jaye
-}
+  // setActiveNav(nav: string) {this.activeNav.set(nav);if (nav === 'appointments') {this.router.navigate(['/appointment']); }this.closeSidebar();}
   deletePatient(id: number) { if (confirm('Are you sure you want to delete this patient?')) {this.patients.update(patients => patients.filter(p => p.id !== id));}}
   applyTheme() {
     const theme = this.currentTheme();
@@ -73,5 +66,21 @@ export class PatientComponent implements OnInit {
      this.specialization = localStorage.getItem('doctorSpecilization');
      this.role = localStorage.getItem('userRole');
   }}
+setActiveNav(nav: string) {
+  this.activeNav.set(nav);
+  switch (nav) {
+    case 'appointments':
+      this.router.navigate(['/appointment']);
+      break;
+    case 'doctor-list':
+      this.router.navigate(['/doctor-list']);
+      break;
+    case 'dashboard':
+      break;
+    case 'patients':
+      break;
+   }
+  this.closeSidebar();
+ } 
   getAvatarUrl(name: string): string {if (!name) {return 'https://ui-avatars.com/api/?name=U&background=667eea&color=fff';} return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=667eea&color=fff`;}
 }

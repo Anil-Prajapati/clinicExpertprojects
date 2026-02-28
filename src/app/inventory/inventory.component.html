@@ -1,15 +1,17 @@
-<div class="inventory-container">
+<div class="inventory-container" *ngIf="role">
   <!-- Header Section -->
   <div class="inventory-header">
     <div class="header-content">
       <div class="header-left">
         <h1 class="page-title">
-          <i class="bi bi-box-seam"></i>
+          <button class="btn-back" (click)="goBack()" title="Back to Dashboard">
+             <i class="bi bi-arrow-left-circle-fill"></i>
+         </button>
           Inventory Management
         </h1>
         <p class="page-subtitle">Real-time tracking and smart analytics</p>
       </div>
-      <div class="header-actions">
+      <div class="header-actions" *ngIf="role !== 'DOCTOR'">
         <button class="btn btn-outline" (click)="openUploadModal()">
           <i class="bi bi-upload"></i>
           Upload Excel
@@ -27,7 +29,7 @@
   </div>
 
   <!-- Metrics Dashboard -->
-  <div class="metrics-grid">
+  <div class="metrics-grid" *ngIf="role !== 'DOCTOR'">
     <div class="metric-card">
       <div class="metric-content">
         <div class="metric-info">

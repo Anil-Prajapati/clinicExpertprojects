@@ -624,8 +624,13 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .modal-content {
@@ -648,6 +653,7 @@
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -823,6 +829,55 @@
 
 .text-danger {
   color: #ef4444 !important;
+}
+
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #667eea;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+}
+
+.btn-back i {
+  font-size: 1.8rem;
+  line-height: 1;
+  display: block;
+}
+
+.btn-back:hover {
+  color: #764ba2;
+  transform: scale(1.15);
+}
+
+.btn-back:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 1.4rem;
+    gap: 8px;
+  }
+
+  .btn-back i {
+    font-size: 1.5rem;
+  }
 }
 
 /* Responsive Design */

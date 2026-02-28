@@ -1,7 +1,8 @@
-import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { CommonModule, DOCUMENT, isPlatformBrowser, Location } from '@angular/common';
 import {Component,OnInit,OnDestroy,Inject,PLATFORM_ID,} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BehaviorSubject, Subscription, interval } from 'rxjs';
+import { AuthService } from '../core/core/services/auth.service';
 export interface InventoryItem {id: number;name: string;category: string;quantity: number;minStock: number;unit: string;price: number;expiryDate: string;supplier: string;batchNumber: string;lastUpdated: Date;status: 'In Stock' | 'Low Stock' | 'Out of Stock' | 'Expired';location?: string;reorderPoint?: number;}
 export interface DashboardMetrics {totalItems: number;totalValue: number;lowStockCount: number;expiredCount: number;nearExpiryCount: number;outOfStockCount: number;}
 
@@ -22,6 +23,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   // UI State
   searchTerm: string = '';
+  role: string | null = '';
   selectedCategory: string = 'All Categories';
   selectedStatus: string = 'All Status';
   sortBy: string = 'name';
@@ -32,7 +34,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   // Pagination
   currentPage: number = 1;
-  itemsPerPage: number = 10;
+  itemsPerPage: number = 5;
   totalPages: number = 1;
   paginatedInventory: InventoryItem[] = [];
 
@@ -49,32 +51,30 @@ export class InventoryComponent implements OnInit, OnDestroy {
 
   // Subscriptions
   private updateSubscription?: Subscription;
-  constructor(@Inject(DOCUMENT) private doc: Document,@Inject(PLATFORM_ID) private platformId: any) {}
-  ngOnInit(): void {if (isPlatformBrowser(this.platformId)) {this.loadInitialData();this.startRealTimeUpdates();this.subscribeToInventory();this.subscribeToMetrics();}}
+  constructor(@Inject(DOCUMENT) private doc: Document,@Inject(PLATFORM_ID) private platformId: any, private authService:AuthService,private location:Location) {}
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.role = localStorage.getItem('userRole');
+      this.loadInitialData();
+      this.startRealTimeUpdates();
+      this.subscribeToInventory();
+      this.subscribeToMetrics();
+    }
+  }
 
   ngOnDestroy(): void {if (this.updateSubscription) {this.updateSubscription.unsubscribe();}}
   // Initial Data Load
   private loadInitialData(): void {
-    const initialData: InventoryItem[] = [
-      { id: 1, name: 'Surgical Gloves (Box)', category: 'Medical Supplies', quantity: 145, minStock: 50, unit: 'Box', price: 450, expiryDate: '2025-12-15', supplier: 'MedSupply Inc', batchNumber: 'BTH-2024-001', lastUpdated: new Date(), status: 'In Stock', location: 'Shelf A-1', reorderPoint: 75 },
-      { id: 2, name: 'Syringes 5ml (Pack)', category: 'Medical Supplies', quantity: 28, minStock: 50, unit: 'Pack', price: 180, expiryDate: '2025-06-20', supplier: 'HealthCare Distributors', batchNumber: 'BTH-2024-002', lastUpdated: new Date(), status: 'Low Stock', location: 'Shelf B-2', reorderPoint: 60 },
-      { id: 3, name: 'Paracetamol 500mg', category: 'Medicines', quantity: 320, minStock: 100, unit: 'Strip', price: 25, expiryDate: '2026-03-10', supplier: 'Pharma Solutions', batchNumber: 'BTH-2024-003', lastUpdated: new Date(), status: 'In Stock', location: 'Cabinet C-1', reorderPoint: 150 },
-      { id: 4, name: 'Bandages (Roll)', category: 'Medical Supplies', quantity: 0, minStock: 25, unit: 'Roll', price: 85, expiryDate: '2025-08-05', supplier: 'MedSupply Inc', batchNumber: 'BTH-2024-004', lastUpdated: new Date(), status: 'Out of Stock', location: 'Shelf A-3', reorderPoint: 30 },
-      { id: 5, name: 'Alcohol Swabs (Pack)', category: 'Medical Supplies', quantity: 280, minStock: 100, unit: 'Pack', price: 120, expiryDate: '2025-11-30', supplier: 'HealthCare Distributors', batchNumber: 'BTH-2024-005', lastUpdated: new Date(), status: 'In Stock', location: 'Shelf B-1', reorderPoint: 125 },
-      { id: 6, name: 'N95 Face Masks', category: 'PPE', quantity: 15, minStock: 50, unit: 'Box', price: 850, expiryDate: '2025-09-15', supplier: 'SafetyFirst Supplies', batchNumber: 'BTH-2024-006', lastUpdated: new Date(), status: 'Low Stock', location: 'Shelf D-1', reorderPoint: 60 },
-      { id: 7, name: 'Digital Thermometer', category: 'Equipment', quantity: 42, minStock: 20, unit: 'Piece', price: 350, expiryDate: '2027-05-30', supplier: 'MedTech Devices', batchNumber: 'BTH-2024-007', lastUpdated: new Date(), status: 'In Stock', location: 'Equipment Room', reorderPoint: 25 },
-      { id: 8, name: 'Antibacterial Hand Gel', category: 'Hygiene', quantity: 95, minStock: 50, unit: 'Bottle', price: 95, expiryDate: '2025-10-12', supplier: 'Hygiene Plus', batchNumber: 'BTH-2024-008', lastUpdated: new Date(), status: 'In Stock', location: 'Shelf E-2', reorderPoint: 70 },
-      { id: 9, name: 'Blood Pressure Monitor', category: 'Equipment', quantity: 18, minStock: 10, unit: 'Piece', price: 1200, expiryDate: '2028-02-28', supplier: 'MedTech Devices', batchNumber: 'BTH-2024-009', lastUpdated: new Date(), status: 'In Stock', location: 'Equipment Room', reorderPoint: 12 },
-      { id: 10, name: 'Insulin Syringes', category: 'Medical Supplies', quantity: 0, minStock: 40, unit: 'Pack', price: 220, expiryDate: '2025-07-15', supplier: 'Pharma Solutions', batchNumber: 'BTH-2024-010', lastUpdated: new Date(), status: 'Out of Stock', location: 'Cabinet C-2', reorderPoint: 50 },
-      { id: 11, name: 'Cotton Balls (Pack)', category: 'Medical Supplies', quantity: 75, minStock: 30, unit: 'Pack', price: 65, expiryDate: '2026-01-20', supplier: 'MedSupply Inc', batchNumber: 'BTH-2024-011', lastUpdated: new Date(), status: 'In Stock', location: 'Shelf A-2', reorderPoint: 40 },
-      { id: 12, name: 'Oxygen Mask', category: 'Emergency', quantity: 22, minStock: 15, unit: 'Piece', price: 150, expiryDate: '2027-08-10', supplier: 'Emergency Supplies Co', batchNumber: 'BTH-2024-012', lastUpdated: new Date(), status: 'In Stock', location: 'Emergency Room', reorderPoint: 18 }
-    ];
-
-    this.inventorySubject.next(initialData);
-    this.updateMetrics();
-    this.applyFilters();
+    this.authService.getAllInventory().subscribe({
+      next:(data: InventoryItem[])=>{
+          this.inventorySubject.next(data);
+          this.updateMetrics();
+          this.applyFilters();
+      },
+      error: (err) => console.error('Data load failed:', err)
+    })
   }
-
+  
   // Real-time Updates Simulation
   private startRealTimeUpdates(): void {
     this.updateSubscription = interval(15000).subscribe(() => {
@@ -111,32 +111,35 @@ export class InventoryComponent implements OnInit, OnDestroy {
   private subscribeToMetrics(): void {this.metrics$.subscribe((metrics) => {this.metrics = metrics; });}
 
   // Update Metrics
-  private updateMetrics(): void {
-    const items = this.inventorySubject.value;
-    const today = new Date();
-    const thirtyDaysFromNow = new Date();
-    thirtyDaysFromNow.setDate(today.getDate() + 30);
+ private updateMetrics(): void {
+  const items = this.inventorySubject.value;
+  const today = new Date();
+  const thirtyDaysFromNow = new Date();
+  thirtyDaysFromNow.setDate(today.getDate() + 30);
 
-    const metrics: DashboardMetrics = {
-      totalItems: items.reduce((sum, item) => sum + item.quantity, 0),
-      totalValue: items.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0
-      ),
-      lowStockCount: items.filter(
-        (item) => item.quantity > 0 && item.quantity <= item.minStock
-      ).length,
-      expiredCount: items.filter((item) => new Date(item.expiryDate) < today)
-        .length,
-      nearExpiryCount: items.filter((item) => {
-        const expiry = new Date(item.expiryDate);
-        return expiry >= today && expiry <= thirtyDaysFromNow;
-      }).length,
-      outOfStockCount: items.filter((item) => item.quantity === 0).length,
-    };
+  const metrics: DashboardMetrics = {
+    totalItems: items.reduce((sum, item) => sum + Number(item.quantity || 0), 0),
+    totalValue: items.reduce(
+      (sum, item) => sum + (Number(item.price || 0) * Number(item.quantity || 0)),
+      0
+    ),
+    
+    lowStockCount: items.filter(
+      (item) => Number(item.quantity) > 0 && Number(item.quantity) <= Number(item.minStock)
+    ).length,
+    
+    expiredCount: items.filter((item) => new Date(item.expiryDate) < today).length,
+    
+    nearExpiryCount: items.filter((item) => {
+      const expiry = new Date(item.expiryDate);
+      return expiry >= today && expiry <= thirtyDaysFromNow;
+    }).length,
+    
+    outOfStockCount: items.filter((item) => Number(item.quantity) === 0).length,
+  };
 
-    this.metricsSubject.next(metrics);
-  }
+  this.metricsSubject.next(metrics);
+}
 
   // Calculate Item Status
   private calculateStatus(quantity: number,minStock: number,expiryDate: string): 'In Stock' | 'Low Stock' | 'Out of Stock' | 'Expired' {const today = new Date();const expiry = new Date(expiryDate);if (expiry < today) return 'Expired';if (quantity === 0) return 'Out of Stock';if (quantity <= minStock) return 'Low Stock'; return 'In Stock';}
@@ -198,6 +201,7 @@ export class InventoryComponent implements OnInit, OnDestroy {
   deleteItem(id: number): void {if (confirm('Are you sure you want to delete this item?')) {const items = this.inventorySubject.value;this.inventorySubject.next(items.filter((item) => item.id !== id));this.updateMetrics();this.applyFilters();}}
   // File Upload Operations
   onFileSelected(event: any): void {this.selectedFile = event.target.files[0];}
+  goBack(): void {this.location.back();}
   async uploadExcel(): Promise<void> {
     if (!this.selectedFile) {alert('Please select a file first!');return;}
     // Simple Excel/CSV parser

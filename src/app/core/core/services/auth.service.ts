@@ -22,4 +22,21 @@ export class AuthService {
   getUnreadCount(doctorId: string): Observable<number> {return this.http.get<number>(`${this.baseURL}/notifications/count/${doctorId}`,{ headers: this.getAuthHeaders() });}
   markAllNotificationsAsRead(doctorId: string): Observable<any> {return this.http.put(`${this.baseURL}/notifications/mark-all-read/${doctorId}`,{},{ headers: this.getAuthHeaders() }); }
   markSingleNotificationAsRead(notificationId: number): Observable<any> {return this.http.put(`${this.baseURL}/notifications/${notificationId}/read`,{},{ headers: this.getAuthHeaders() });}
+  getAllInventory():Observable<any[]>{
+    return this.http.get<any[]>(`${this.baseURL}/inventory`,{
+      headers:this.getAuthHeaders()
+    });
+  }
+
+  createInventory(inventoryData:any){
+    return this.http.post<any>(`${this.baseURL}/inventory/create`,inventoryData,{
+      headers: this.getAuthHeaders()
+    })
+  }
+
+  updateInventory(id: number, inventoryData: any): Observable<any> {
+    return this.http.put<any>(`${this.baseURL}/inventory/update/${id}`, inventoryData, { 
+      headers: this.getAuthHeaders() 
+    });
+  }
 }

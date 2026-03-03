@@ -17,7 +17,7 @@ export const routes: Routes = [
   { path: 'registration', component: RegistrationComponent },
   { path: 'admin', component: AdminComponent, canActivate: [authGuard], data: { roles: ['ADMIN'] } },
   { path: 'doctor', component: DoctorComponent, canActivate:[authGuard], data:{roles:['DOCTOR']} },
-  { path: 'patient', component: PatientComponent, canActivate:[authGuard], data:{roles:['PATIENT']} },
+  { path: 'patient', component: PatientComponent, canActivate:[authGuard], data:{roles:['PATIENT','ADMIN', 'DOCTOR']} },
   { path: 'plans', component: PlansComponent },
   { path: 'appointment', component: AppointmentComponent, canActivate: [authGuard], data: { roles: ['ADMIN', 'DOCTOR', 'PATIENT'] } },
   { path: 'doctor-list', component: DoctorListComponent, canActivate: [authGuard], data: { roles: ['ADMIN', 'DOCTOR', 'PATIENT'] } },

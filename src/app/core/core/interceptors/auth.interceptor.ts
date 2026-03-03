@@ -27,7 +27,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         Swal.fire({
           icon: 'info',
           title: 'Session Expired',
-          text: 'Security reason ki wajah se aapko fir se login karna hoga.',
+          text: 'You will need to login again due to security reasons.',
           timer: 10000,
           showConfirmButton: false,
         }).then(() => {

@@ -1,5 +1,5 @@
 import {Component,signal,computed,OnInit,Inject,PLATFORM_ID, inject,} from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser,Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../core/core/services/auth.service';
@@ -25,8 +25,9 @@ export class PatientComponent implements OnInit {
   specialization: string | null = '';
   role: string | null = ''; 
   doctorList: any[] = [];
+  patients = signal<Patient[]>([]);
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object,public authService:AuthService) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: Object,public authService:AuthService, private location:Location) {}
 
   themes: Theme[] = [
     {name: 'blue',primary: '#0d6efd',secondary: '#0b5ed7',gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',light: '#e7f1ff',hover: 'rgba(13, 110, 253, 0.1)',},
@@ -36,12 +37,46 @@ export class PatientComponent implements OnInit {
     {name: 'teal',primary: '#20c997',secondary: '#1aa179',gradient: 'linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%)',light: '#d2f4ea',hover: 'rgba(32, 201, 151, 0.1)',},
     {name: 'pink',primary: '#d63384',secondary: '#b02a6f',gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',light: '#f7d6e6',hover: 'rgba(214, 51, 132, 0.1)',},];
 
-  patients = signal<Patient[]>([
-    {id: 1001,name: 'Rajesh Kumar',age: 45,gender: 'Male',bloodGroup: 'O+',status: 'Stable',contact: '+91 98765 43210',admissionDate: '15 Jan 2026',},
-    {id: 1002,name: 'Priya Sharma',age: 32,gender: 'Female',bloodGroup: 'A+',status: 'Critical',contact: '+91 98765 43211',admissionDate: '18 Jan 2026',},
-    {id: 1003,name: 'Amit Patel',age: 28,gender: 'Male',bloodGroup: 'B+',status: 'Stable',contact: '+91 98765 43212',admissionDate: '20 Jan 2026',},
-    {id: 1004,name: 'Sneha Verma',age: 56,gender: 'Female',bloodGroup: 'AB+',status: 'Stable',contact: '+91 98765 43213',admissionDate: '21 Jan 2026',},]);
+  showSidebar = computed(() => {
+    const userRole = this.role?.toUpperCase();
+    return !(userRole === 'ADMIN' || userRole === 'DOCTOR');
+  });
+  loadPatientsData() {
+    this.authService.getAllPatient().subscribe({
+    next: (data: any[]) => {
 
+      console.log("Patient Data : ",data)
+      const mappedPatients = data.map(p => ({
+        id: p.patientId, 
+        name: p.fullName, 
+        age: this.calculateAge(p.dateOfBirth),
+        gender: p.gender,
+        bloodGroup: p.bloodGroup,
+        status: p.patientStatus,
+        contact: p.contactNumber,
+        admissionDate: p.createdAt
+      }));
+      this.patients.set(mappedPatients);
+    },
+    error: (err) => console.error("Error loading patients:", err)
+  });
+}
+
+ calculateAge(dob: string): number {
+  if (!dob) return 0;
+  const birthDate = new Date(dob);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+}
+
+  goBack(): void {
+    this.location.back();
+  }
   filteredPatients = computed(() => {const term = this.searchTerm().toLowerCase();if (!term) return this.patients();return this.patients().filter(p => p.name.toLowerCase().includes(term));});
   currentTheme = computed(() => {return this.themes.find(t => t.name === this.selectedTheme()) || this.themes[0];});
   criticalCount = computed(() => {return this.patients().filter(p => p.status === 'Critical').length;});
@@ -50,7 +85,6 @@ export class PatientComponent implements OnInit {
   toggleThemeMenu() {this.showThemeMenu.update(v => !v);}
   toggleSidebar() {this.sidebarOpen.update(v => !v); }
   closeSidebar() {this.sidebarOpen.set(false);}
-  // setActiveNav(nav: string) {this.activeNav.set(nav);if (nav === 'appointments') {this.router.navigate(['/appointment']); }this.closeSidebar();}
   deletePatient(id: number) { if (confirm('Are you sure you want to delete this patient?')) {this.patients.update(patients => patients.filter(p => p.id !== id));}}
   applyTheme() {
     const theme = this.currentTheme();
@@ -65,6 +99,9 @@ export class PatientComponent implements OnInit {
      this.loginName = localStorage.getItem('loginName');
      this.specialization = localStorage.getItem('doctorSpecilization');
      this.role = localStorage.getItem('userRole');
+     if (this.role !== 'PATIENT' && this.role !== 'ROLE_PATIENT') {
+        this.loadPatientsData();
+      }
   }}
 setActiveNav(nav: string) {
   this.activeNav.set(nav);

@@ -9,7 +9,6 @@
          </button>
           Inventory Management
         </h1>
-        <p class="page-subtitle">Real-time tracking and smart analytics</p>
       </div>
       <div class="header-actions" *ngIf="role !== 'DOCTOR'">
         <button class="btn btn-outline" (click)="openUploadModal()">
@@ -167,7 +166,7 @@
             <th>Supplier</th>
             <th>Location</th>
             <th class="text-center">Status</th>
-            <th class="text-center">Actions</th>
+            <th *ngIf="role !== 'DOCTOR'" class="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -222,10 +221,10 @@
             </td>
             <td class="text-center">
               <div class="action-buttons">
-                <button class="btn-icon btn-edit" (click)="openEditModal(item)" title="Edit">
+                <button *ngIf="role !== 'DOCTOR'" class="btn-icon btn-edit" (click)="openEditModal(item)" title="Edit">
                   <i class="bi bi-pencil"></i>
                 </button>
-                <button class="btn-icon btn-delete" (click)="deleteItem(item.id)" title="Delete">
+                <button *ngIf="role !== 'DOCTOR'" class="btn-icon btn-delete" (click)="deleteItem(item.id)" title="Delete">
                   <i class="bi bi-trash"></i>
                 </button>
               </div>

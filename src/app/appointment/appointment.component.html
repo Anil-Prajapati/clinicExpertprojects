@@ -1,11 +1,277 @@
-<div class="main-wrapper">
-  <div class="bg-shape shape-1"></div>
-  <div class="bg-shape shape-2"></div>
-  <div class="bg-shape shape-3"></div>
+<div class="appointments-wrapper">
+  <!-- Animated background -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+  <div class="bg-grid"></div>
 
-  <div class="glass-card">
+  <!-- ===== ADMIN / DOCTOR VIEW ===== -->
+  <div *ngIf="role === 'ADMIN' || role === 'DOCTOR'" class="container-fluid admin-view">
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <button class="back-btn" (click)="goBack()">
+          <span class="back-icon"><i class="bi bi-arrow-left"></i></span>
+          <span class="back-text">Back</span>
+        </button>
+        <div class="page-title-wrap">
+          <div class="page-title-icon"><i class="bi bi-calendar2-week-fill"></i></div>
+          <div>
+            <h1 class="page-title">All Appointments</h1>
+            <span class="page-subtitle">
+              Showing {{ pagedList.length ? (currentPage - 1) * pageSize + 1 : 0 }}–{{ (currentPage - 1) * pageSize + pagedList.length }} of {{ filteredList.length }} records
+            </span>
+          </div>
+        </div>
+      </div>
+      <button class="refresh-btn" (click)="loadAllAppointments()" [class.spinning]="isLoading">
+        <i class="bi bi-arrow-clockwise"></i>
+        <span>Refresh</span>
+      </button>
+    </div>
+
+    <!-- Filter Bar — all changes are INSTANT, no API call on filter -->
+    <div class="filter-bar">
+      <!-- Search by Name -->
+      <div class="filter-group search-group">
+        <i class="bi bi-search filter-icon"></i>
+        <input
+          type="text"
+          class="filter-input"
+          placeholder="Search by patient name..."
+          [(ngModel)]="filterName"
+          (ngModelChange)="applyFilters()"
+        />
+        <button *ngIf="filterName" class="clear-input" (click)="filterName=''; applyFilters()">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+
+      <!-- Date Filter -->
+      <div class="filter-group date-group">
+        <i class="bi bi-calendar3 filter-icon"></i>
+        <input
+          type="date"
+          class="filter-input"
+          [(ngModel)]="filterDate"
+          (ngModelChange)="applyFilters()"
+        />
+        <button *ngIf="filterDate" class="clear-input" (click)="filterDate=''; applyFilters()">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+
+      <!-- Type Filter -->
+      <div class="filter-group select-group">
+        <i class="bi bi-tag filter-icon"></i>
+        <select class="filter-select" [(ngModel)]="filterType" (ngModelChange)="applyFilters()">
+          <option value="">All Types</option>
+          <option value="New">New</option>
+          <option value="Follow-Up">Follow-Up</option>
+        </select>
+        <i class="bi bi-chevron-down select-arrow"></i>
+      </div>
+
+      <!-- Status Filter -->
+      <div class="filter-group select-group">
+        <i class="bi bi-circle-half filter-icon"></i>
+        <select class="filter-select" [(ngModel)]="filterStatus" (ngModelChange)="applyFilters()">
+          <option value="">All Status</option>
+          <option value="PENDING">Pending</option>
+          <option value="APPROVED">Approved</option>
+          <option value="CANCELLED">Cancelled</option>
+        </select>
+        <i class="bi bi-chevron-down select-arrow"></i>
+      </div>
+
+      <!-- Page Size Selector -->
+      <div class="filter-group select-group pg-size-group">
+        <i class="bi bi-list-ol filter-icon"></i>
+        <select class="filter-select" [(ngModel)]="pageSize" (ngModelChange)="onPageSizeChange()">
+          <option [value]="5">5 / page</option>
+          <option [value]="10">10 / page</option>
+          <option [value]="25">25 / page</option>
+          <option [value]="50">50 / page</option>
+        </select>
+        <i class="bi bi-chevron-down select-arrow"></i>
+      </div>
+
+      <!-- Clear All -->
+      <button class="clear-all-btn" (click)="clearAllFilters()" *ngIf="hasActiveFilters()">
+        <i class="bi bi-x-circle"></i> Clear All
+      </button>
+    </div>
+
+    <!-- Active Filter Tags -->
+    <div class="filter-tags" *ngIf="hasActiveFilters()">
+      <span class="filter-tags-label">Active filters:</span>
+      <span class="filter-tag" *ngIf="filterName">
+        <i class="bi bi-person"></i> {{ filterName }}
+        <button (click)="filterName=''; applyFilters()"><i class="bi bi-x"></i></button>
+      </span>
+      <span class="filter-tag" *ngIf="filterDate">
+        <i class="bi bi-calendar"></i> {{ filterDate }}
+        <button (click)="filterDate=''; applyFilters()"><i class="bi bi-x"></i></button>
+      </span>
+      <span class="filter-tag" *ngIf="filterType">
+        <i class="bi bi-tag"></i> {{ filterType }}
+        <button (click)="filterType=''; applyFilters()"><i class="bi bi-x"></i></button>
+      </span>
+      <span class="filter-tag" *ngIf="filterStatus">
+        <i class="bi bi-circle-half"></i> {{ filterStatus }}
+        <button (click)="filterStatus=''; applyFilters()"><i class="bi bi-x"></i></button>
+      </span>
+    </div>
+
+    <!-- Loading Skeleton -->
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="skeleton-table">
+        <div class="skeleton-header"></div>
+        <div class="skeleton-row" *ngFor="let s of [1,2,3,4,5,6,7,8]">
+          <div class="sk-avatar"></div>
+          <div class="sk-lines">
+            <div class="sk-line sk-w60"></div>
+            <div class="sk-line sk-w40"></div>
+          </div>
+          <div class="sk-line sk-w50 sk-ml"></div>
+          <div class="sk-line sk-w40 sk-ml"></div>
+          <div class="sk-badge"></div>
+          <div class="sk-badge"></div>
+          <div class="sk-actions">
+            <div class="sk-btn"></div>
+            <div class="sk-btn"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div *ngIf="!isLoading" class="table-wrap">
+      <div class="table-scroll">
+        <table class="appt-table">
+          <thead>
+            <tr>
+              <th class="th-num">#</th>
+              <th>Patient Details</th>
+              <th>Contact</th>
+              <th>Date & Slot</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th class="th-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let appt of pagedList; let i = index"
+                class="table-row"
+                [style.animation-delay]="i * 25 + 'ms'">
+              <td class="td-num">{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+              <td class="td-patient">
+                <div class="patient-avatar" [style.background]="getAvatarColor(appt.patientName)">
+                  {{ appt.patientName?.charAt(0)?.toUpperCase() }}
+                </div>
+                <div>
+                  <div class="patient-name">{{ appt.patientName }}</div>
+                  <span class="patient-gender">{{ appt.gender }}</span>
+                </div>
+              </td>
+              <td class="td-contact">
+                <i class="bi bi-telephone-fill contact-icon"></i>
+                {{ appt.patientContact }}
+              </td>
+              <td class="td-date">
+                <div class="date-val">{{ appt.appointmentDate }}</div>
+                <div class="time-val"><i class="bi bi-clock"></i> {{ appt.timeSlot }}</div>
+              </td>
+              <td class="td-type">
+                <span class="type-badge"
+                  [class.type-new]="appt.appointmentType?.toUpperCase() === 'NEW'"
+                  [class.type-follow]="appt.appointmentType?.toUpperCase() === 'FOLLOW-UP'">
+                  {{ appt.appointmentType }}
+                </span>
+              </td>
+              <td class="td-status">
+                <span class="status-badge"
+                  [class.status-pending]="appt.status?.toUpperCase() === 'PENDING'"
+                  [class.status-approved]="appt.status?.toUpperCase() === 'APPROVED'"
+                  [class.status-cancelled]="appt.status?.toUpperCase() === 'CANCELLED'">
+                  <span class="status-dot"></span>
+                  {{ appt.status }}
+                </span>
+              </td>
+              <td class="td-actions">
+                <button class="action-btn approve-btn" title="Approve Appointment">
+                  <i class="bi bi-check-lg"></i>
+                </button>
+                <button class="action-btn delete-btn" title="Delete Appointment">
+                  <i class="bi bi-trash3"></i>
+                </button>
+              </td>
+            </tr>
+
+            <!-- Empty State -->
+            <tr *ngIf="pagedList.length === 0">
+              <td colspan="7" class="empty-state">
+                <div class="empty-icon"><i class="bi bi-calendar-x"></i></div>
+                <div class="empty-title">No appointments found</div>
+                <div class="empty-sub">Try adjusting your filters or clearing them</div>
+                <button class="empty-reset-btn" (click)="clearAllFilters()">
+                  <i class="bi bi-arrow-counterclockwise"></i> Reset Filters
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ===== PAGINATION BAR ===== -->
+      <div class="pagination-bar" *ngIf="filteredList.length > pageSize">
+        <div class="pagination-info">
+          <span>Page <strong>{{ currentPage }}</strong> of <strong>{{ totalPages }}</strong></span>
+          <span class="pg-divider">·</span>
+          <span><strong>{{ filteredList.length }}</strong> total records</span>
+        </div>
+
+        <div class="pagination-controls">
+          <!-- First Page -->
+          <button class="pg-btn pg-edge" (click)="goToPage(1)" [disabled]="currentPage === 1" title="First page">
+            <i class="bi bi-chevron-double-left"></i>
+          </button>
+          <!-- Prev Page -->
+          <button class="pg-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1" title="Previous page">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+
+          <!-- Page Number Buttons -->
+          <ng-container *ngFor="let p of getPageNumbers()">
+            <span *ngIf="p === -1" class="pg-ellipsis">···</span>
+            <button *ngIf="p !== -1"
+              class="pg-btn pg-num"
+              [class.pg-active]="p === currentPage"
+              (click)="goToPage(p)">
+              {{ p }}
+            </button>
+          </ng-container>
+
+          <!-- Next Page -->
+          <button class="pg-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages" title="Next page">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+          <!-- Last Page -->
+          <button class="pg-btn pg-edge" (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages" title="Last page">
+            <i class="bi bi-chevron-double-right"></i>
+          </button>
+        </div>
+      </div>
+      <!-- end pagination -->
+
+    </div><!-- end table-wrap -->
+
+  </div><!-- end admin-view -->
+
+  <!-- ===== PATIENT BOOKING VIEW ===== -->
+  <div *ngIf="role === 'PATIENT' || !role" class="glass-card">
     <div class="row g-0">
-
       <div class="col-lg-5 left-panel d-none d-lg-flex">
         <div class="overlay-content text-center">
           <div class="back-navigation">
@@ -20,75 +286,61 @@
           </div>
           <h2 class="text-white fw-bold">Smart Health</h2>
           <p class="text-white-50 px-4">Fast-track your booking using our digital concierge.</p>
-
           <div class="status-indicator mt-4">
             <span class="ping"></span>
             <span class="text-white small fw-light">Live Availability Enabled</span>
           </div>
         </div>
       </div>
-
       <div class="col-lg-7 form-panel">
         <div class="form-container">
           <div class="header-box mb-4">
             <h3 class="fw-bold color-primary">Book Appointment</h3>
             <p class="text-muted small">Fill out the form to secure your slot instantly.</p>
           </div>
-
           <form [formGroup]="appointmentForm" (ngSubmit)="submit()">
-
             <div class="mb-4">
               <label class="modern-label">Patient Name</label>
               <input formControlName="patientName" class="modern-input" placeholder="Enter full name">
             </div>
-
             <div class="row">
               <div class="col-md-6 mb-4">
                 <label class="modern-label">Phone Number</label>
                 <input formControlName="patientContact" class="modern-input" placeholder="+91 00000 00000">
               </div>
-              
               <div class="col-md-6 mb-4">
                 <label class="modern-label">Gender</label>
                 <select formControlName="gender" class="modern-select">
-                  <option value="" selected disabled>Choose...</option>
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
                   <option value="Other">Other</option>
                 </select>
               </div>
             </div>
-
             <div class="mb-4">
               <label class="modern-label">Doctor</label>
               <input type="text" class="modern-input" [value]="doctorName" readonly />
             </div>
-
             <div class="row">
               <div class="col-md-4 mb-4">
                 <label class="modern-label">Date</label>
                 <input type="date" formControlName="appointmentDate" class="modern-input">
               </div>
-              
               <div class="col-md-4 mb-4">
                 <label class="modern-label">Hour (24h)</label>
                 <input type="number" formControlName="hour" class="modern-input" placeholder="HH" min="0" max="23">
               </div>
-
               <div class="col-md-4 mb-4">
                 <label class="modern-label">Minute</label>
                 <input type="number" formControlName="minute" class="modern-input" placeholder="MM" min="0" max="59">
               </div>
             </div>
-
             <div class="visit-toggle mb-4">
               <input type="radio" formControlName="appointmentType" value="New" id="newV">
               <label for="newV" class="toggle-btn">New Patient</label>
-
               <input type="radio" formControlName="appointmentType" value="Follow-Up" id="followV">
               <label for="followV" class="toggle-btn">Follow-Up</label>
             </div>
-
             <button type="submit" class="modern-btn" [disabled]="appointmentForm.invalid">
               <span>Confirm Booking</span>
               <span class="arrow">→</span>
@@ -96,7 +348,6 @@
           </form>
         </div>
       </div>
-
     </div>
   </div>
 </div>

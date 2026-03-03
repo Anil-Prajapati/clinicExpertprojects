@@ -1,10 +1,10 @@
-<!-- dashboard.component.html -->
+<!-- patient.component.html -->
 <div class="d-flex" id="wrapper">
-  <!-- Overlay for mobile -->
-  <div class="sidebar-overlay" [class.show]="sidebarOpen()" (click)="closeSidebar()"></div>
+  <!-- Overlay for mobile - HIDE for ADMIN/DOCTOR -->
+  <div class="sidebar-overlay" [class.show]="sidebarOpen() && showSidebar()" (click)="closeSidebar()"></div>
 
-  <!-- Sidebar -->
-  <aside class="sidebar shadow-lg" id="sidebar-wrapper" [class.show]="sidebarOpen()">
+  <!-- Sidebar - HIDE for ADMIN/DOCTOR -->
+  <aside class="sidebar shadow-lg" id="sidebar-wrapper" *ngIf="showSidebar()">
     <div class="sidebar-heading border-bottom p-4">
       <div class="d-flex align-items-center justify-content-between">
         <div class="d-flex align-items-center">
@@ -34,14 +34,14 @@
     <div class="list-group list-group-flush p-3">
       <a class="nav-item mb-2" [class.active]="activeNav() === 'dashboard'"
         (click)="setActiveNav('dashboard'); closeSidebar()">
-        <i class="bi bi-grid-1x2-fill me-3"></i>Dashboard 
+        <i class="bi bi-grid-1x2-fill me-3"></i>Dashboard
       </a>
       <a class="nav-item mb-2" [class.active]="activeNav() === 'patients'"
         (click)="setActiveNav('patients'); closeSidebar()">
         <i class="bi bi-people me-3"></i>Patients
       </a>
-      <a *ngIf="role === 'ROLE_PATIENT' || role === 'PATIENT'" class="nav-item mb-2"
-        [class.active]="activeNav() === 'doctor-list'" (click)="setActiveNav('doctor-list'); closeSidebar()">
+      <a *ngIf="role === 'PATIENT'" class="nav-item mb-2" [class.active]="activeNav() === 'doctor-list'"
+        (click)="setActiveNav('doctor-list'); closeSidebar()">
         <i class="bi bi-person-badge-fill me-3"></i>Appointments
       </a>
       <a class="nav-item mb-2" [class.active]="activeNav() === 'settings'"
@@ -62,11 +62,14 @@
 
   <!-- Main Content -->
   <div id="page-content-wrapper" class="w-100">
-    <!-- Top Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-4 py-3 sticky-top shadow-sm">
+    <!-- Top Navbar - HIDE MENU BUTTON for ADMIN/DOCTOR -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-4 py-3 sticky-top shadow-sm"
+      *ngIf="showSidebar()">
       <div class="container-fluid">
         <div class="d-flex align-items-center">
-          <button class="btn btn-link text-dark d-lg-none me-2 p-0" id="menu-toggle" (click)="toggleSidebar()">
+          <!-- MENU BUTTON ONLY FOR PATIENT -->
+          <button class="btn btn-link text-dark d-lg-none me-2 p-0" id="menu-toggle" (click)="toggleSidebar()"
+            *ngIf="showSidebar()">
             <i class="bi bi-list fs-4"></i>
           </button>
           <h5 class="m-0 fw-bold d-none d-md-block" style="color: var(--theme-primary)">
@@ -92,12 +95,18 @@
       </div>
     </nav>
 
-    <!-- Dashboard Content -->
-    <div class="container-fluid py-4 px-lg-5 content-area">
+    <!-- For ADMIN/DOCTOR - Full width content without navbar -->
+    <div class="container-fluid py-4 px-lg-5 content-area" [class.full-width]="!showSidebar()">
       <!-- Header Section -->
       <div class="row align-items-center mb-4 g-3">
         <div class="col-lg-6">
+
+
           <h2 class="fw-bold text-dark m-0 d-flex align-items-center">
+            <button *ngIf="role === 'ADMIN' || role === 'DOCTOR'" class="back-btn"
+              (click)="goBack()" title="Go Back">
+              <i class="bi bi-arrow-left"></i> Back
+            </button>&nbsp;
             Patient Directory
             <span class="badge rounded-pill ms-3 fs-6 theme-badge">
               <i class="bi bi-people-fill me-1"></i>
@@ -112,7 +121,7 @@
             <input type="text" class="form-control border-0 shadow-none px-3 py-2 bg-transparent"
               placeholder="Search by patient name..." [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)">
             <button class="btn btn-primary rounded-pill px-4 me-1">
-              <i class="bi bi-plus-lg me-1"></i> Add New
+              Search
             </button>
           </div>
         </div>

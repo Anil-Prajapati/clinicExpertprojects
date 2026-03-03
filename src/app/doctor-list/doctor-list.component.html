@@ -1,75 +1,378 @@
 <div id="particles-js" class="particles-bg"></div>
 <div class="content-wrapper">
-  <div class="container-fluid">
-    <div class="text-center animate__animated animate__fadeIn">
-      <h2 class="display-5 fw-bold mb-2 main-heading">Your Health, <span class="text-gradient">Our Priority</span></h2>
-      <p class="text-muted lead mx-auto" style="max-width: 600px;">
-        Find and book appointments with the city's top-rated specialists in just a few clicks.
-      </p>
-       <div class="back-nav">
-      <button class="btn-back" (click)="goBack()">
-        <i class="fas fa-arrow-left me-2"></i> Back Home
-      </button>
-    </div>
-      <div class="heading-underline mx-auto"></div>
-    </div>
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-3 mt-1" *ngIf="doctorList && doctorList.length > 0">
-      <div class="col" *ngFor="let doctor of doctorList">
-        
-        <div class="card h-100 border-0 shadow-lg position-relative overflow-hidden doctor-card">
-          <span class="badge position-absolute top-0 end-0 m-3 py-2 px-3 status-badge" 
-                [ngClass]="doctor.status === 'ACTIVE' ? 'bg-success' : 'bg-danger'">
-            {{ doctor.status }}
-          </span>
+  <div class="container-fluid px-4">
 
-          <div class="text-center profile-header py-4">
-            <div class="doctor-img-container mx-auto shadow">
-               <img src="https://cdn-icons-png.flaticon.com/512/387/387561.png" 
-                    alt="Doctor" class="img-fluid">
+    <!-- ===================== ADMIN / DOCTOR VIEW — TABLE ===================== -->
+    <div *ngIf="isAdmin">
+
+      <!-- Top Bar -->
+      <div class="admin-top-bar">
+        <div class="admin-top-left">
+          <button class="btn-back" (click)="goBack()">
+           <i class="bi bi-arrow-left me-2"></i> Back
+          </button>
+          <div class="admin-title-wrap">
+            <div class="admin-title-icon"><i class="bi bi-person-workspace"></i></div>
+            <div>
+              <h1 class="admin-title">Doctor Management</h1>
+              <span class="admin-subtitle text-dark">
+                Showing {{ pagedList.length ? (currentPage - 1) * pageSize + 1 : 0 }}–{{ (currentPage - 1) * pageSize + pagedList.length }} of {{ filteredList.length }} doctors
+              </span>
             </div>
           </div>
+        </div>
+        <button class="btn-add-doctor" (click)="openAddModal()">
+         <i class="bi bi-person-plus-fill me-2"></i> Add Doctor
+        </button>
+      </div>
 
-          <div class="card-body px-4">
-            <h5 class="card-title text-center fw-bold mb-1 text-dark">{{ doctor.fullName }}</h5>
-            <p class="text-primary text-center small mb-3 fw-bold text-uppercase letter-spacing-1">
-              <i class="fas fa-stethoscope me-1"></i> {{ doctor.doctorSpecialization }}
-            </p>
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="filter-group search-group">
+        <i class="bi bi-search filter-icon"></i>
+          <input type="text" class="filter-input" placeholder="Search by name..."
+            [(ngModel)]="filterName" (ngModelChange)="applyFilters()" />
+          <button *ngIf="filterName" class="clear-input" (click)="filterName=''; applyFilters()">
+           <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
 
-            <div class="info-list border-top pt-3">
-              <div class="info-item d-flex justify-content-between mb-2">
-                <span class="text-secondary small"><i class="fas fa-graduation-cap me-2"></i>Degree</span>
-                <span class="fw-bold text-dark small">{{ doctor.doctorQualification }}</span>
-              </div>
-              <div class="info-item d-flex justify-content-between mb-2">
-                <span class="text-secondary small"><i class="fas fa-history me-2"></i>Experience</span>
-                <span class="badge bg-light text-dark fw-bold border">{{ doctor.doctorExperience }}</span>
-              </div>
-              <div class="info-item d-flex justify-content-between">
-                <span class="text-secondary small"><i class="fas fa-clock me-2"></i>Available</span>
-                <span class="fw-bold text-success extra-small">
-                  {{ doctor.doctorAvailableFrom }} - {{ doctor.doctorAvailableTo }}
-                </span>
-              </div>
-            </div>
+        <div class="filter-group select-group">
+          <i class="fas fa-stethoscope filter-icon"></i>
+          <select class="filter-select" [(ngModel)]="filterSpec" (ngModelChange)="applyFilters()">
+            <option value="">All Specializations</option>
+            <option *ngFor="let s of specializationOptions" [value]="s">{{ s }}</option>
+          </select>
+          <i class="bi bi-chevron-down select-arrow"></i>
+        </div>
+
+        <div class="filter-group select-group">
+          <i class="fas fa-circle filter-icon"></i>
+          <select class="filter-select" [(ngModel)]="filterStatus" (ngModelChange)="applyFilters()">
+            <option value="">All Status</option>
+            <option value="ACTIVE">Active</option>
+            <option value="INACTIVE">Inactive</option>
+          </select>
+          <i class="bi bi-chevron-down select-arrow"></i>
+        </div>
+
+        <!-- Page Size -->
+        <div class="filter-group select-group pg-size-group">
+          <i class="fas fa-list-ol filter-icon"></i>
+          <select class="filter-select" [(ngModel)]="pageSize" (ngModelChange)="onPageSizeChange()">
+            <option [value]="5">5 / page</option>
+            <option [value]="10">10 / page</option>
+            <option [value]="25">25 / page</option>
+          </select>
+          <i class="bi bi-chevron-down select-arrow"></i>
+        </div>
+
+        <button class="clear-all-btn" (click)="clearAllFilters()" *ngIf="hasActiveFilters()">
+          <i class="fas fa-times-circle me-1"></i> Clear All
+        </button>
+      </div>
+
+      <!-- Active Filter Tags -->
+      <div class="filter-tags" *ngIf="hasActiveFilters()">
+        <span class="filter-tags-label">Filters:</span>
+        <span class="filter-tag" *ngIf="filterName">
+          <i class="fas fa-user me-1"></i>{{ filterName }}
+          <button (click)="filterName=''; applyFilters()"><i class="fas fa-times"></i></button>
+        </span>
+        <span class="filter-tag" *ngIf="filterSpec">
+          <i class="fas fa-stethoscope me-1"></i>{{ filterSpec }}
+          <button (click)="filterSpec=''; applyFilters()"><i class="fas fa-times"></i></button>
+        </span>
+        <span class="filter-tag" *ngIf="filterStatus">
+          <i class="fas fa-circle me-1"></i>{{ filterStatus }}
+          <button (click)="filterStatus=''; applyFilters()"><i class="fas fa-times"></i></button>
+        </span>
+      </div>
+
+      <!-- Skeleton Loader -->
+      <div *ngIf="isLoading" class="skeleton-table">
+        <div class="sk-header"></div>
+        <div class="sk-row" *ngFor="let s of [1,2,3,4,5,6]">
+          <div class="sk-avatar"></div>
+          <div class="sk-lines"><div class="sk-line sk-w55"></div><div class="sk-line sk-w35"></div></div>
+          <div class="sk-line sk-w45 sk-ml"></div>
+          <div class="sk-line sk-w35 sk-ml"></div>
+          <div class="sk-badge"></div>
+          <div class="sk-badge"></div>
+          <div class="sk-actions"><div class="sk-btn"></div><div class="sk-btn"></div></div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div *ngIf="!isLoading" class="table-wrap">
+        <div class="table-scroll">
+          <table class="doctor-table">
+            <thead>
+              <tr>
+                <th class="th-num">#</th>
+                <th>Doctor</th>
+                <th>Specialization</th>
+                <th>Qualification</th>
+                <th>Experience</th>
+                <th>Available Hours</th>
+                <th>Status</th>
+                <th class="th-actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let doc of pagedList; let i = index"
+                  class="table-row" [style.animation-delay]="i * 30 + 'ms'">
+                <td class="td-num">{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+                <td class="td-doctor">
+                  <div class="doc-avatar" [style.background]="getAvatarColor(doc.fullName)">
+                    {{ doc.fullName?.charAt(0)?.toUpperCase() }}
+                  </div>
+                  <div>
+                    <div class="doc-name">{{ doc.fullName }}</div>
+                    <div class="doc-id">ID: {{ doc.doctorId }}</div>
+                  </div>
+                </td>
+                <td class="td-spec">
+                  <span class="spec-badge"><i class="fas fa-stethoscope me-1"></i>{{ doc.doctorSpecialization }}</span>
+                </td>
+                <td class="td-qual">{{ doc.doctorQualification }}</td>
+                <td class="td-exp">
+                  <span class="exp-badge">{{ doc.doctorExperience }}</span>
+                </td>
+                <td class="td-time">
+                  <i class="fas fa-clock me-1"></i>{{ doc.doctorAvailableFrom }} – {{ doc.doctorAvailableTo }}
+                </td>
+                <td class="td-status">
+                  <span class="status-pill"
+                    [class.status-active]="doc.status === 'ACTIVE'"
+                    [class.status-inactive]="doc.status !== 'ACTIVE'">
+                    <span class="status-dot"></span>
+                    {{ doc.status }}
+                  </span>
+                </td>
+                <td class="td-actions">
+                  <button class="action-btn edit-btn" (click)="openEditModal(doc)" title="Edit">
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
+                  <button class="action-btn delete-btn" (click)="confirmDelete(doc)" title="Delete">
+                   <i class="bi bi-trash3"></i>
+                  </button>
+                </td>
+              </tr>
+
+              <tr *ngIf="pagedList.length === 0">
+                <td colspan="8" class="empty-state">
+                  <div class="empty-icon"><i class="fas fa-user-md"></i></div>
+                  <div class="empty-title">No doctors found</div>
+                  <div class="empty-sub">Try adjusting your filters</div>
+                  <button class="empty-reset-btn" (click)="clearAllFilters()">
+                    <i class="fas fa-undo me-1"></i> Reset Filters
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-bar" *ngIf="filteredList.length > pageSize">
+          <div class="pagination-info">
+            Page <strong>{{ currentPage }}</strong> of <strong>{{ totalPages }}</strong>
+            <span class="pg-divider">·</span>
+            <strong>{{ filteredList.length }}</strong> doctors total
           </div>
-
-          <div class="card-footer bg-white border-0 p-4 pt-0">
-            <button class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow-sm book-btn mt-3" 
-                    (click)="onBookAppointment(doctor)">
-              Book Appointment
+          <div class="pagination-controls">
+            <button class="pg-btn pg-edge" (click)="goToPage(1)" [disabled]="currentPage === 1" title="First">
+              <i class="fas fa-angle-double-left"></i>
+            </button>
+            <button class="pg-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1" title="Prev">
+              <i class="fas fa-angle-left"></i>
+            </button>
+            <ng-container *ngFor="let p of getPageNumbers()">
+              <span *ngIf="p === -1" class="pg-ellipsis">···</span>
+              <button *ngIf="p !== -1" class="pg-btn pg-num"
+                [class.pg-active]="p === currentPage" (click)="goToPage(p)">{{ p }}</button>
+            </ng-container>
+            <button class="pg-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages" title="Next">
+              <i class="fas fa-angle-right"></i>
+            </button>
+            <button class="pg-btn pg-edge" (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages" title="Last">
+              <i class="fas fa-angle-double-right"></i>
             </button>
           </div>
         </div>
+      </div>
+    </div>
+    <!-- ===================== END ADMIN VIEW ===================== -->
 
+
+    <!-- ===================== PATIENT VIEW — CARDS ===================== -->
+    <div *ngIf="!isAdmin">
+      <div class="text-center animate__animated animate__fadeIn">
+        <h2 class="display-5 fw-bold mb-2 main-heading">Your Health, <span class="text-gradient">Our Priority</span></h2>
+        <p class="text-muted lead mx-auto" style="max-width: 600px;">
+          Find and book appointments with the city's top-rated specialists in just a few clicks.
+        </p>
+        <div class="back-nav">
+          <button class="btn-back" (click)="goBack()">
+            <i class="fas fa-arrow-left me-2"></i> Back Home
+          </button>
+        </div>
+        <div class="heading-underline mx-auto"></div>
+      </div>
+
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-3 mt-1"
+           *ngIf="doctorList && doctorList.length > 0">
+        <div class="col" *ngFor="let doctor of pagedList">
+          <div class="card h-100 border-0 shadow-lg position-relative overflow-hidden doctor-card">
+            <span class="badge position-absolute top-0 end-0 m-3 py-2 px-3 status-badge"
+                  [ngClass]="doctor.status === 'ACTIVE' ? 'bg-success' : 'bg-danger'">
+              {{ doctor.status }}
+            </span>
+            <div class="text-center profile-header py-4">
+              <div class="doctor-img-container mx-auto shadow">
+                <img src="https://cdn-icons-png.flaticon.com/512/387/387561.png" alt="Doctor" class="img-fluid">
+              </div>
+            </div>
+            <div class="card-body px-4">
+              <h5 class="card-title text-center fw-bold mb-1 text-dark">{{ doctor.fullName }}</h5>
+              <p class="text-primary text-center small mb-3 fw-bold text-uppercase letter-spacing-1">
+                <i class="fas fa-stethoscope me-1"></i> {{ doctor.doctorSpecialization }}
+              </p>
+              <div class="info-list border-top pt-3">
+                <div class="info-item d-flex justify-content-between mb-2">
+                  <span class="text-secondary small"><i class="fas fa-graduation-cap me-2"></i>Degree</span>
+                  <span class="fw-bold text-dark small">{{ doctor.doctorQualification }}</span>
+                </div>
+                <div class="info-item d-flex justify-content-between mb-2">
+                  <span class="text-secondary small"><i class="fas fa-history me-2"></i>Experience</span>
+                  <span class="badge bg-light text-dark fw-bold border">{{ doctor.doctorExperience }}</span>
+                </div>
+                <div class="info-item d-flex justify-content-between">
+                  <span class="text-secondary small"><i class="fas fa-clock me-2"></i>Available</span>
+                  <span class="fw-bold text-success extra-small">{{ doctor.doctorAvailableFrom }} - {{ doctor.doctorAvailableTo }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer bg-white border-0 p-4 pt-0">
+              <button class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow-sm book-btn mt-3"
+                      (click)="onBookAppointment(doctor)">
+                Book Appointment
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Patient Pagination -->
+      <div class="patient-pagination" *ngIf="filteredList.length > pageSize">
+        <div class="pagination-controls">
+          <button class="pg-btn pg-edge" (click)="goToPage(1)" [disabled]="currentPage === 1"><i class="fas fa-angle-double-left"></i></button>
+          <button class="pg-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"><i class="fas fa-angle-left"></i></button>
+          <ng-container *ngFor="let p of getPageNumbers()">
+            <span *ngIf="p === -1" class="pg-ellipsis">···</span>
+            <button *ngIf="p !== -1" class="pg-btn pg-num" [class.pg-active]="p === currentPage" (click)="goToPage(p)">{{ p }}</button>
+          </ng-container>
+          <button class="pg-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"><i class="fas fa-angle-right"></i></button>
+          <button class="pg-btn pg-edge" (click)="goToPage(totalPages)" [disabled]="currentPage === totalPages"><i class="fas fa-angle-double-right"></i></button>
+        </div>
+      </div>
+
+      <div class="text-center py-5" *ngIf="isLoading">
+        <div class="spinner-border text-light" role="status"></div>
+        <p class="text-white mt-3">Fetching amazing doctors for you...</p>
+      </div>
+    </div>
+    <!-- ===================== END PATIENT VIEW ===================== -->
+
+  </div>
+</div>
+
+
+<!-- ===================== ADD / EDIT MODAL ===================== -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="doctor-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header-bar">
+      <div class="modal-title-wrap">
+        <div class="modal-title-icon">
+          <i class="fas" [class.fa-user-plus]="!editMode" [class.fa-user-edit]="editMode"></i>
+        </div>
+        <div>
+          <h2 class="modal-title">{{ editMode ? 'Edit Doctor' : 'Add New Doctor' }}</h2>
+          <p class="modal-subtitle">{{ editMode ? 'Update doctor information' : 'Fill in doctor details below' }}</p>
+        </div>
+      </div>
+      <button class="modal-close-btn" (click)="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="modal-body-wrap">
+      <div class="modal-form-grid">
+        <div class="form-field">
+          <label class="field-label">Full Name <span class="required">*</span></label>
+          <input type="text" class="field-input" placeholder="Dr. John Smith"
+            [(ngModel)]="modalData.fullName" />
+        </div>
+        <div class="form-field">
+          <label class="field-label">Specialization <span class="required">*</span></label>
+          <input type="text" class="field-input" placeholder="e.g. Cardiologist"
+            [(ngModel)]="modalData.doctorSpecialization" />
+        </div>
+        <div class="form-field">
+          <label class="field-label">Qualification <span class="required">*</span></label>
+          <input type="text" class="field-input" placeholder="e.g. MBBS, MD"
+            [(ngModel)]="modalData.doctorQualification" />
+        </div>
+        <div class="form-field">
+          <label class="field-label">Experience</label>
+          <input type="text" class="field-input" placeholder="e.g. 5 Years"
+            [(ngModel)]="modalData.doctorExperience" />
+        </div>
+        <div class="form-field">
+          <label class="field-label">Available From</label>
+          <input type="time" class="field-input" [(ngModel)]="modalData.doctorAvailableFrom" />
+        </div>
+        <div class="form-field">
+          <label class="field-label">Available To</label>
+          <input type="time" class="field-input" [(ngModel)]="modalData.doctorAvailableTo" />
+        </div>
+        <div class="form-field">
+          <label class="field-label">Status</label>
+          <div class="field-select-wrap">
+            <select class="field-input" [(ngModel)]="modalData.status">
+              <option value="ACTIVE">Active</option>
+              <option value="INACTIVE">Inactive</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="field-label">Email</label>
+          <input type="email" class="field-input" placeholder="doctor@hospital.com"
+            [(ngModel)]="modalData.email" />
+        </div>
       </div>
     </div>
 
-    <div class="text-center py-5" *ngIf="doctorList && doctorList.length === 0">
-      <div class="spinner-border text-light" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
-      <p class="text-white mt-3">Fetching amazing doctors for you...</p>
+    <div class="modal-footer-bar">
+      <button class="modal-btn cancel" (click)="closeModal()">Cancel</button>
+      <button class="modal-btn save" (click)="saveDoctor()" [disabled]="isSaving">
+        <span *ngIf="!isSaving"><i class="fas" [class.fa-plus]="!editMode" [class.fa-save]="editMode" class="me-2"></i>{{ editMode ? 'Update' : 'Add Doctor' }}</span>
+        <span *ngIf="isSaving"><i class="fas fa-spinner fa-spin me-2"></i>Saving...</span>
+      </button>
     </div>
+  </div>
+</div>
 
+<!-- ===================== DELETE CONFIRM MODAL ===================== -->
+<div class="modal-overlay" *ngIf="showDeleteModal" (click)="showDeleteModal = false">
+  <div class="delete-modal" (click)="$event.stopPropagation()">
+    <div class="delete-icon-wrap"><i class="fas fa-exclamation-triangle"></i></div>
+    <h3 class="delete-title">Delete Doctor?</h3>
+    <p class="delete-msg">Are you sure you want to remove <strong>{{ deleteTarget?.fullName }}</strong>? This action cannot be undone.</p>
+    <div class="delete-actions">
+      <button class="modal-btn cancel" (click)="showDeleteModal = false">Cancel</button>
+      <button class="modal-btn danger" (click)="deleteDoctor()">
+        <i class="fas fa-trash me-2"></i> Delete
+      </button>
+    </div>
   </div>
 </div>

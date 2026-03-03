@@ -24,11 +24,11 @@
         <i class="bi bi-gear"></i>
       </button>
       <button class="icon-btn logout-style" (click)="onLogout()" title="Logout">
-         <i class="bi bi-box-arrow-right"></i>
-     </button>
+        <i class="bi bi-box-arrow-right"></i>
+      </button>
       <div class="admin-profile">
         <span class="admin-label">{{role}}</span>
-        <img [src]="getAvatarUrl(loginName)" class="rounded-3 shadow-sm border" style="width: 40px; height: 40px;"/>
+        <img [src]="getAvatarUrl(loginName)" class="rounded-3 shadow-sm border" style="width: 40px; height: 40px;" />
       </div>
     </div>
   </header>
@@ -50,57 +50,16 @@
       </div>
 
       <nav class="sidebar-nav">
-        <div class="nav-item active">
-          <i class="bi bi-grid"></i>
-          <span>Dashboard</span>
-          <i class="bi bi-chevron-down ms-auto"></i>
-        </div>
+        <div *ngFor="let item of menuItems; let i = index" class="nav-item" [class.active]="item.active"
+          (click)="setActiveMenu(i)">
 
-        <div class="nav-item">
-          <i class="bi bi-calendar-check"></i>
-          <span>Appointments</span>
-        </div>
+          <i [className]="item.icon"></i>
 
-        <div class="nav-item">
-          <i class="bi bi-people"></i>
-          <span>Patients</span>
-          <i class="bi bi-chevron-right ms-auto"></i>
-        </div>
+          <span>{{ item.label }}</span>
 
-        <div class="nav-item">
-          <i class="bi bi-heart-pulse"></i>
-          <span>Doctors</span>
-          <i class="bi bi-chevron-right ms-auto"></i>
-        </div>
-
-        <div class="nav-item">
-          <i class="bi bi-box"></i>
-          <span>Features</span>
-          <i class="bi bi-chevron-right ms-auto"></i>
-        </div>
-
-        <div class="nav-item">
-          <i class="bi bi-table"></i>
-          <span>Forms, Tables & Charts</span>
-          <i class="bi bi-chevron-right ms-auto"></i>
-        </div>
-
-        <div class="nav-item">
-          <i class="bi bi-grid-3x3"></i>
-          <span>Apps & Widgets</span>
-          <i class="bi bi-chevron-right ms-auto"></i>
-        </div>
-
-        <div class="nav-item">
-          <i class="bi bi-lock"></i>
-          <span>Authentication</span>
-          <i class="bi bi-chevron-right ms-auto"></i>
-        </div>
-
-        <div class="nav-item">
-          <i class="bi bi-triangle"></i>
-          <span>Miscellaneous</span>
-          <i class="bi bi-chevron-right ms-auto"></i>
+          <i *ngIf="item.label !== 'Appointments'"
+            [className]="item.label === 'Dashboard' ? 'bi bi-chevron-down ms-auto' : 'bi bi-chevron-right ms-auto'">
+          </i>
         </div>
       </nav>
 
@@ -240,7 +199,7 @@
                 </div>
                 <div class="balance-chart">
                   <svg viewBox="0 0 100 40" width="100" height="40">
-                    <path d="M 0 30 Q 25 20 50 25 T 100 15" fill="none" stroke="#20D4B3" stroke-width="2"/>
+                    <path d="M 0 30 Q 25 20 50 25 T 100 15" fill="none" stroke="#20D4B3" stroke-width="2" />
                   </svg>
                 </div>
               </div>
@@ -254,7 +213,7 @@
                 </div>
                 <div class="balance-chart">
                   <svg viewBox="0 0 100 40" width="100" height="40">
-                    <path d="M 0 15 Q 25 25 50 20 T 100 30" fill="none" stroke="#FF6B9D" stroke-width="2"/>
+                    <path d="M 0 15 Q 25 25 50 20 T 100 30" fill="none" stroke="#FF6B9D" stroke-width="2" />
                   </svg>
                 </div>
               </div>
@@ -275,11 +234,8 @@
                   <i class="bi bi-chevron-left"></i>
                 </button>
                 <div class="date-options">
-                  <div 
-                    class="date-option" 
-                    *ngFor="let option of dateOptions; let i = index"
-                    [class.active]="option.isActive"
-                    (click)="selectDate(i)">
+                  <div class="date-option" *ngFor="let option of dateOptions; let i = index"
+                    [class.active]="option.isActive" (click)="selectDate(i)">
                     <div class="day">{{ option.day }}</div>
                     <div class="date">{{ option.date }}</div>
                     <i class="bi bi-calendar" *ngIf="option.isActive"></i>
@@ -297,9 +253,7 @@
                     <div class="appointment-type">{{ appointment.type }}</div>
                   </div>
                   <div class="appointment-actions">
-                    <button 
-                      class="call-btn" 
-                      (click)="callDoctor(appointment)"
+                    <button class="call-btn" (click)="callDoctor(appointment)"
                       [title]="'Call ' + appointment.doctorName">
                       <i class="bi bi-telephone-fill"></i>
                     </button>
@@ -324,10 +278,14 @@
             <div class="card-body">
               <div class="pie-chart-container">
                 <svg viewBox="0 0 200 200" width="200" height="200">
-                  <circle cx="100" cy="100" r="80" fill="none" stroke="#5B4DFF" stroke-width="40" stroke-dasharray="176 352" transform="rotate(-90 100 100)"/>
-                  <circle cx="100" cy="100" r="80" fill="none" stroke="#20D4B3" stroke-width="40" stroke-dasharray="150 352" stroke-dashoffset="-176" transform="rotate(-90 100 100)"/>
-                  <circle cx="100" cy="100" r="80" fill="none" stroke="#FF6B9D" stroke-width="40" stroke-dasharray="100 352" stroke-dashoffset="-326" transform="rotate(-90 100 100)"/>
-                  <circle cx="100" cy="100" r="80" fill="none" stroke="#FFA800" stroke-width="40" stroke-dasharray="76 352" stroke-dashoffset="-426" transform="rotate(-90 100 100)"/>
+                  <circle cx="100" cy="100" r="80" fill="none" stroke="#5B4DFF" stroke-width="40"
+                    stroke-dasharray="176 352" transform="rotate(-90 100 100)" />
+                  <circle cx="100" cy="100" r="80" fill="none" stroke="#20D4B3" stroke-width="40"
+                    stroke-dasharray="150 352" stroke-dashoffset="-176" transform="rotate(-90 100 100)" />
+                  <circle cx="100" cy="100" r="80" fill="none" stroke="#FF6B9D" stroke-width="40"
+                    stroke-dasharray="100 352" stroke-dashoffset="-326" transform="rotate(-90 100 100)" />
+                  <circle cx="100" cy="100" r="80" fill="none" stroke="#FFA800" stroke-width="40"
+                    stroke-dasharray="76 352" stroke-dashoffset="-426" transform="rotate(-90 100 100)" />
                 </svg>
               </div>
               <div class="chart-labels">

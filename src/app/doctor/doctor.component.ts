@@ -127,25 +127,29 @@ export class DoctorComponent implements OnInit {
       }, 30000);
     }
   }
-  setActiveMenu(index: number) {
-    this.menuItems.forEach((item, i) => {
-      item.active = i === index;
-    });
-    const selectedLabel = this.menuItems[index].label;
-    this.activeView = selectedLabel;
-    switch (selectedLabel) {
-      case 'Medicines':
-        this.router.navigate(['/inventory']);
+    setActiveMenu(index: number) {
+      this.menuItems.forEach((item, i) => {
+        item.active = i === index;
+      });
+      const selectedLabel = this.menuItems[index].label;
+      this.activeView = selectedLabel;
+      switch (selectedLabel) {
+        case 'Appointments':
+        this.router.navigate(['/appointment']);
         break;
-      case 'Dashboard':
-        setTimeout(() => this.createChart(), 0);
-        break;
+        case 'Medicines':
+          this.router.navigate(['/inventory']);
+          break;
+        case 'Dashboard':
+          setTimeout(() => this.createChart(), 0);
+          break;
+      }
+      if (window.innerWidth < 992) {
+        this.isSidebarOpen = false;
+      }
     }
-    if (window.innerWidth < 992) {
-      this.isSidebarOpen = false;
-    }
-  }
-    ngOnDestroy() {if (this.notificationInterval) {clearInterval(this.notificationInterval);}}
+  
+  ngOnDestroy() {if (this.notificationInterval) {clearInterval(this.notificationInterval);}}
   refreshNotifications() {this.loadUnreadCount();this.loadUnreadNotifications();}
   loadUnreadNotifications() {if (!this.doctorId) return;this.authService.getNotifications(this.doctorId).subscribe({next: (data: any[]) => {this.notifications = data.filter(n => !n.read);},error: (err) => console.error(err)});}
   markAllAsRead() {if (!this.doctorId || this.unreadCount === 0) return;this.authService.markAllNotificationsAsRead(this.doctorId).subscribe({next: () => {this.notifications = []; this.unreadCount = 0; this.showNotificationDropdown = false; },error: (err) => console.error(err)});}

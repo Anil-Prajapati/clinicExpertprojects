@@ -30,6 +30,7 @@ html {
 .text-center {
   text-align: center;
 }
+
 .theme-toggle-btn {
   background: none;
   border: none;
@@ -140,12 +141,12 @@ html {
 }
 
 .logo-png {
-  width: 110px;       
+  width: 110px;
   height: 110px;
   object-fit: contain;
   display: block;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-  -webkit-text-fill-color: initial; 
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  -webkit-text-fill-color: initial;
 }
 
 .logo:hover {
@@ -153,12 +154,12 @@ html {
 }
 
 .mobile-menu-btn {
-  display: none; 
+  display: none;
   background: none;
   border: none;
   font-size: 30px;
   cursor: pointer;
-  color: #2563eb; 
+  color: #2563eb;
   padding: 5px;
   transition: transform 0.3s ease;
 }
@@ -375,15 +376,10 @@ html {
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 12px !important;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-}
-
-.btn-primary i {
-  width: 22px;
-  height: 22px;
 }
 
 .btn-primary:hover {
@@ -391,6 +387,22 @@ html {
   transform: translateY(-3px);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
 }
+
+/* Bootstrap Icons Fix */
+.btn-primary .bi {
+  width: 22px !important;
+  height: 22px !important;
+  font-size: 22px !important;
+  color: #1f2937 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+}
+
 
 /* Section Title - Enhanced */
 .section-title {
@@ -507,22 +519,32 @@ html {
   height: 90px;
   background: var(--gradient-bg);
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   box-shadow: 0 12px 35px rgba(37, 99, 235, 0.4);
   transition: all 0.3s ease;
+  overflow: hidden;
 }
 
 .feature-icon-badge:hover {
   transform: rotate(15deg) scale(1.1);
 }
 
-.feature-icon-badge i {
-  width: 45px;
-  height: 45px;
-  color: white;
+.feature-icon-badge .bi {
+  width: 42px !important;
+  height: 42px !important;
+  color: white !important;
+  font-size: 42px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
 }
+
 
 .feature-content {
   flex: 1;
@@ -534,11 +556,13 @@ html {
   height: 80px;
   background: var(--light-bg);
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   margin-bottom: 28px;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .feature-icon-circle:hover {
@@ -546,11 +570,20 @@ html {
   box-shadow: 0 8px 24px rgba(37, 99, 235, 0.2);
 }
 
-.feature-icon-circle i {
-  width: 40px;
-  height: 40px;
-  color: var(--primary-color);
+.feature-icon-circle .bi {
+  width: 36px !important;
+  height: 36px !important;
+  color: var(--primary-color) !important;
+  font-size: 36px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
 }
+
 
 .feature-heading {
   font-size: 38px;
@@ -667,13 +700,29 @@ html {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(8px);
   border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   color: var(--primary-color, #2563eb);
   z-index: 2;
+  overflow: hidden;
 }
+
+.card-badge .bi {
+  width: 24px !important;
+  height: 24px !important;
+  font-size: 24px !important;
+  color: var(--primary-color, #2563eb) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+}
+
 
 .card-content {
   padding: 30px 12px 12px;
@@ -791,22 +840,36 @@ html {
 }
 
 .badge-icon {
-  width: 55px;
-  height: 55px;
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
   background: var(--gradient-bg);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-right: 12px;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+  transition: all 0.3s ease;
 }
 
-.badge-icon i {
-  width: 30px;
-  height: 30px;
-  color: white;
+.badge-icon:hover {
+  transform: scale(1.1);
 }
+
+.badge-icon .bi {
+  width: 26px !important;
+  height: 26px !important;
+  font-size: 26px !important;
+  color: white !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+}
+
 
 .badge-text h4 {
   font-size: 14px;
@@ -848,22 +911,32 @@ html {
   height: 70px;
   background: var(--gradient-bg);
   border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   flex-shrink: 0;
   box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
   transition: all 0.3s ease;
+  overflow: hidden;
 }
+
 
 .why-choose-item:hover .why-item-icon {
   transform: rotate(5deg) scale(1.05);
 }
 
-.why-item-icon i {
-  width: 35px;
-  height: 35px;
-  color: white;
+.why-item-icon .bi {
+  width: 32px !important;
+  height: 32px !important;
+  color: white !important;
+  font-size: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
 }
 
 .why-item-content h3 {
@@ -2880,6 +2953,7 @@ html {
     padding: 15px;
   }
 }
+
 @media screen and (max-width: 992px) {
   .nav-content {
     padding: 0 20px !important;
@@ -2894,20 +2968,25 @@ html {
   .nav-links {
     display: none !important;
     /* Row layout setup */
-    flex-direction: row !important; 
-    flex-wrap: nowrap !important; /* Ek hi line mein rakhne ke liye */
-    overflow-x: auto !important; /* Side scroll enable karne ke liye */
-    
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    /* Ek hi line mein rakhne ke liye */
+    overflow-x: auto !important;
+    /* Side scroll enable karne ke liye */
+
     position: absolute !important;
     top: 75px !important;
     left: 0 !important;
     width: 100% !important;
     background: #ffffff !important;
-    padding: 10px 15px !important; /* Padding kam ki gayi hai */
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    padding: 10px 15px !important;
+    /* Padding kam ki gayi hai */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
     z-index: 1000 !important;
-    gap: 15px !important; /* Links ke beech ki space */
-    scrollbar-width: none; /* Firefox mein scrollbar chhupane ke liye */
+    gap: 15px !important;
+    /* Links ke beech ki space */
+    scrollbar-width: none;
+    /* Firefox mein scrollbar chhupane ke liye */
   }
 
   /* Chrome/Safari mein scrollbar chhupane ke liye */
@@ -2921,13 +3000,16 @@ html {
   }
 
   .nav-links a {
-    width: auto !important; /* Width 100% se hata kar auto kar di */
+    width: auto !important;
+    /* Width 100% se hata kar auto kar di */
     padding: 10px 5px !important;
     text-align: left !important;
     color: #374151 !important;
-    border-bottom: none !important; /* Border hata di */
+    border-bottom: none !important;
+    /* Border hata di */
     display: inline-block !important;
-    white-space: nowrap !important; /* Text ko wrap hone se rokne ke liye */
+    white-space: nowrap !important;
+    /* Text ko wrap hone se rokne ke liye */
     font-size: 14px !important;
   }
 
@@ -2942,7 +3024,8 @@ html {
 
   .btn-trial {
     margin: 0 10px !important;
-    width: auto !important; /* Poori width nahi lega */
+    width: auto !important;
+    /* Poori width nahi lega */
     padding: 8px 15px !important;
     font-size: 14px !important;
   }

@@ -25,8 +25,37 @@ export class AdminComponent implements OnInit {
   loginName: string | null = '';
   specialization: string | null = '';
   role: string | null = ''; 
+  showAuthModal = false;
+  showMiscModal = false;
+  activeAuthPage: string | null = null;
+  activeMiscPage: string | null = null;
+  is2FAEnabled = false;
+  activeView = 'dashboard';
+
+openAuthModal(): void { this.showAuthModal = true; }
+closeAuthModal(): void { this.showAuthModal = false; this.activeAuthPage = null; }
+
+openMiscModal(): void { this.showMiscModal = true; }
+closeMiscModal(): void { this.showMiscModal = false; this.activeMiscPage = null; }
+
+setAuthPage(page: string): void { this.activeAuthPage = this.activeAuthPage === page ? null : page; }
+openMiscPage(page: string): void { this.activeMiscPage = page; }
+toggle2FA(): void { this.is2FAEnabled = !this.is2FAEnabled; }
 
   constructor(public authService: AuthService,private router: Router,@Inject(PLATFORM_ID) private platformId: Object) {}
+   // Menu Items ka array jisme icon aur route information hai
+menuItems = [
+  { label: 'Dashboard', icon: 'bi bi-grid', active: true },
+  { label: 'Appointments', icon: 'bi bi-calendar-check', active: false },
+  { label: 'Patients', icon: 'bi bi-people', active: false },
+  { label: 'Doctors', icon: 'bi bi-heart-pulse', active: false },
+  { label: 'Inventory', icon: 'bi bi-clipboard2-check-fill', active: false },
+  { label: 'Features', icon: 'bi bi-box', active: false },
+  { label: 'Forms, Tables & Charts', icon: 'bi bi-table', active: false },
+  { label: 'Apps & Widgets', icon: 'bi bi-grid-3x3', active: false },
+  { label: 'Authentication', icon: 'bi bi-lock', active: false },
+  { label: 'Miscellaneous', icon: 'bi bi-triangle', active: false }
+];
   statCards: StatCard[] = [
     { title: 'Total Patients', value: '1,548', icon: 'people' },
     { title: 'Consultation', value: '448', icon: 'chat-dots' },
@@ -74,6 +103,39 @@ export class AdminComponent implements OnInit {
     { day: 'Thursday', date: 'December 1st 2022', isActive: true },
     { day: 'Fri', date: '2nd', isActive: false }
   ];
+
+setActiveMenu(index: number) {
+  this.menuItems.forEach((item, i) => {
+    item.active = i === index;
+  });
+
+  const selectedLabel = this.menuItems[index].label;
+  this.activeView = selectedLabel;
+  switch (selectedLabel) {
+    case 'Appointments':
+      this.router.navigate(['/appointment']);
+      break;
+    case 'Patients':
+       this.router.navigate(['/patient'])
+       break;
+    case 'Doctors':
+      this.router.navigate(['/doctor-list']);
+      break;
+    case 'Inventory':
+      this.router.navigate(['/inventory']);
+      break;
+    case 'Dashboard':
+      break;
+    case 'Miscellaneous':
+
+      this.activeView = 'misc'; 
+      break;
+  }
+
+  if (window.innerWidth < 992) {
+    this.isSidebarOpen = false;
+  }
+}
 
   ngOnInit(): void {this.loadDashboardData();if (isPlatformBrowser(this.platformId)) {this.loginName = localStorage.getItem('loginName');this.specialization = localStorage.getItem('doctorSpecilization');this.role = localStorage.getItem('userRole');}}
   getAvatarUrl(name: string | undefined | null): string {

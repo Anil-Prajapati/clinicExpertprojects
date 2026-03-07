@@ -20,6 +20,7 @@ export class LoginComponent implements OnInit {
   loginName:string ='';
   doctorSpecilization:string ='';
   doctorId:string = '';
+  patientObj: any; 
   loginData = {clinicEmail: '',clinicContact: '',clinicPassword: '', rememberMe: false,};
   constructor(private router: Router,private authService: AuthService,@Inject(PLATFORM_ID) private platformId: any) {}
   ngOnInit(): void {if (isPlatformBrowser(this.platformId)) {this.loadParticles();}}
@@ -37,15 +38,27 @@ export class LoginComponent implements OnInit {
       next: (res) => {
         const role = res?.response_datas?.data?.roleName;
         const token = res?.response_identifier?.token;
+        const patientObj = {
+            patientId: res?.response_identifier?.patient_id,
+            clinicId: res?.response_identifier?.clinic_id,
+            fullName: res?.response_identifier?.patient_name,
+            contactNumber: res?.response_datas?.data?.patient_contact,
+            gender: res?.response_datas?.data?.patient_gender,
+         };
         const loginName= res?.response_identifier?.doctor_full_name || res?.response_identifier?.clinic_name || res?.response_identifier?.patient_name ||'';
         const doctorSpecilization = res?.response_datas?.doctor_specialization || '';
         const doctorId = res?.response_identifier.doctor_id;
+        const clinicId = res?.response_identifier.clinic_id;      
         if (role && token) {
           localStorage.setItem('token', token);
           localStorage.setItem('userRole', role);
           localStorage.setItem('loginName', loginName);
           localStorage.setItem('doctorSpecilization', doctorSpecilization);
           localStorage.setItem('doctorId',doctorId);
+          localStorage.setItem('clinicId',clinicId);
+          localStorage.setItem('patientId', patientObj.patientId || '');
+          localStorage.setItem('clinicId', patientObj.clinicId || '');
+          localStorage.setItem('patientName', patientObj.fullName || '');
           this.redirectUser(role);
         } else {
           this.isLoading = false;
@@ -134,7 +147,7 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  redirectUser(role: string) {switch (role) {case 'ADMIN':this.router.navigate(['/admin']);break;case 'DOCTOR':this.router.navigate(['/doctor']);break;case 'PATIENT':this.router.navigate(['/patient']);break;default:alert('Role not found'); }}
+  redirectUser(role: string) {switch (role) {case 'ADMIN':this.router.navigate(['/admin']);break;case 'DOCTOR':this.router.navigate(['/doctor']);break;case 'PATIENT':this.router.navigate(['/patient'], { state: { patient: this.patientObj } });break;default:alert('Role not found'); }}
   validateLogin(): boolean {
   if (!this.loginData.clinicEmail && !this.loginData.clinicContact) {alert('Please enter your email or contact number');return false;}
   if (this.loginData.clinicContact) {const contactPattern = /^[0-9]{10}$/;if (!contactPattern.test(this.loginData.clinicContact)) {alert('Invalid contact number. It should be 10 digits.');return false; }}

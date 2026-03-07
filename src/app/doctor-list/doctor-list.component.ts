@@ -44,6 +44,7 @@ export class DoctorListComponent implements OnInit {
   editMode  = false;
   isSaving  = false;
   modalData: any = {};
+  clinicId: string | null = '';
 
   // ─── Delete Modal ─────────────────────────────────────────────
   showDeleteModal = false;
@@ -63,6 +64,11 @@ export class DoctorListComponent implements OnInit {
       this.ngZone.runOutsideAngular(() => this.loadParticles());
 
       const token = localStorage.getItem('token');
+      this.clinicId = localStorage.getItem('clinicId');
+
+      if (!this.clinicId) {
+          console.error('ClinicId not found in localStorage');
+      }
       if (!token) {
         this.router.navigate(['/patient']);
         return;
@@ -81,7 +87,7 @@ export class DoctorListComponent implements OnInit {
     this.authService.getDoctorList().subscribe({
       next: (data: any[]) => {
         this.doctorList = data;
-
+        console.log("Doctor List :",this.doctorList)
         // Build unique specialization dropdown from data
         const specs = [...new Set(data.map(d => d.doctorSpecialization).filter(Boolean))];
         this.specializationOptions = specs.sort();
@@ -213,10 +219,14 @@ export class DoctorListComponent implements OnInit {
         }
       });
     } else {
-      // ── ADD ──
-      this.authService.addDoctor(this.modalData).subscribe({
+
+      if (!this.clinicId) {
+        console.error('ClinicId not available');
+         return;
+      }
+      this.authService.addDoctor(this.modalData,this.clinicId).subscribe({
         next: (newDoc) => {
-          this.doctorList.unshift(newDoc);  // prepend so it appears first
+          this.doctorList.unshift(newDoc); 
           this.applyFilters();
           this.closeModal();
         },

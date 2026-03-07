@@ -198,6 +198,15 @@
           </ng-container>
           <!-- PATIENT REGISTRATION FIELDS -->
           <ng-container *ngIf="selectedRole === 'PATIENT'">
+            <select class="form-control" [(ngModel)]="selectedClinicId" name="clinicId">
+
+              <option value="">Select Clinic</option>
+
+              <option *ngFor="let clinic of clinics" [value]="clinic.clinic_id">
+                {{ clinic.clinic_name }}
+              </option>
+
+            </select>
             <div class="form-row-group">
               <div class="form-group">
                 <label><i class="bi bi-person"></i> Full Name</label>

@@ -5,11 +5,28 @@ import {
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { AuthService } from '../core/core/services/auth.service';
 import Swal from 'sweetalert2';
+
+export interface Appointment {
+  patientName: string;
+  patientContact: string;
+  gender: string;
+  appointmentDate: string;
+  timeSlot: string;
+  appointmentType: string;
+  status: string;
+  patient: {
+    patientId: string;
+  };
+  doctor: {
+    doctorId: string;
+  };
+}
 
 @Component({
   selector: 'app-appointment',
@@ -20,21 +37,20 @@ import Swal from 'sweetalert2';
 })
 export class AppointmentComponent implements OnInit {
   appointmentForm!: FormGroup;
-  showQR: boolean = true;
-  doctorId!: string;
-  clinicId!: string;
-  doctorName!: string;
+  doctorId: string = '';
+  clinicId: string = '';
+  doctorName: string = '';
   role: string | null = '';
   appointmentsList: any[] = [];
   isLoading: boolean = false;
+
   filterName: string = '';
   filterDate: string = '';
   filterType: string = '';
   filterStatus: string = '';
   filteredList: any[] = [];
-
   currentPage: number = 1;
-  pageSize: number = 10; // default 10 rows per page
+  pageSize: number = 10;
   totalPages: number = 1;
   pagedList: any[] = [];
 
@@ -44,216 +60,173 @@ export class AppointmentComponent implements OnInit {
     private location: Location,
     private authService: AuthService,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  ) {
+    const nav = this.router.getCurrentNavigation();
+    if (nav?.extras.state) {
+      const state = nav.extras.state as any;
+      this.doctorId = state.doctorId || '';
+      this.doctorName = state.doctorName || '';
+      this.clinicId = state.clinicId || '';
+    }
+  }
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.role = localStorage.getItem('userRole');
-      console.log('role: ', this.role);
+      const today = new Date();
+      this.filterDate = today.toISOString().split('T')[0];
+      const savedPatientId = localStorage.getItem('patientId') || '';
+      const savedClinicId =
+        this.clinicId || localStorage.getItem('clinicId') || '';
 
-      // Debugging Logs
-      console.log('Current Role from LocalStorage:', this.role);
+      this.initForm(savedPatientId, savedClinicId);
 
-      if (
-        this.role === 'ADMIN' ||
-        this.role === 'DOCTOR' ||
-        this.role === 'PATIENT'
-      ) {
-        console.log('Condition Matched! Calling loadAllAppointments...');
+      if (this.role === 'ADMIN' || this.role === 'DOCTOR') {
         this.loadAllAppointments();
-      } else {
-        console.warn('Condition Not Matched. Check if role is correct.');
-        const state = window.history.state;
-        if (state && state.doctorId) {
-          this.doctorId = state.doctorId;
-          this.doctorName = state.doctorName;
-        }
       }
     }
+  }
 
+  initForm(pId: string, cId: string) {
     this.appointmentForm = this.fb.group({
-      patientName: [''],
-      patientContact: [''],
-      gender: ['Male'],
-      appointmentDate: [''],
-      hour: [''],
-      minute: [''],
-      appointmentType: ['New'],
+      clinicId: [{ value: cId, disabled: true }],
+      patientId: [{ value: pId, disabled: true }],
+      doctorId: [{ value: this.doctorId, disabled: true }],
+      patientName: ['', Validators.required],
+      patientContact: [
+        '',
+        [Validators.required, Validators.pattern('^[0-9]{10,12}$')],
+      ],
+      gender: ['Male', Validators.required],
+      appointmentDate: ['', Validators.required],
+      hour: ['', [Validators.required, Validators.min(0), Validators.max(23)]],
+      minute: [
+        '',
+        [Validators.required, Validators.min(0), Validators.max(59)],
+      ],
+      appointmentType: ['New', Validators.required],
     });
   }
-  submit(): void {
-    const form = this.appointmentForm.value;
-    if (!this.doctorId) {
-      Swal.fire(
-        'Error',
-        'Doctor selection missing. Please try again.',
-        'error'
-      );
-      return;
-    }
-    const hourStr = String(form.hour || '00').padStart(2, '0');
-    const minuteStr = String(form.minute || '00').padStart(2, '0');
-    const formattedTime = `${hourStr}:${minuteStr}:00`;
 
-    if (!form.appointmentDate) {
-      Swal.fire('Error', 'Please select a valid date.', 'warning');
+  submit(): void {
+    if (this.appointmentForm.invalid) {
+      Swal.fire('Warning', 'Please fill all required fields.', 'warning');
       return;
     }
+    const form = this.appointmentForm.getRawValue();
+    const hourStr = String(form.hour).padStart(2, '0');
+    const minStr = String(form.minute).padStart(2, '0');
+    const formattedTimeSlot = `${hourStr}:${minStr}:00`;
 
     const payload = {
       patientName: form.patientName,
       patientContact: form.patientContact,
       gender: form.gender,
-      clinicId: null,
-      doctorId: this.doctorId,
       appointmentDate: form.appointmentDate,
-      timeSlot: formattedTime,
+      timeSlot: formattedTimeSlot,
       appointmentType: form.appointmentType,
       status: 'PENDING',
+      patient: {
+        patientId: form.patientId,
+      },
+      doctor: {
+        doctorId: form.doctorId || this.doctorId,
+      },
+      clinic: {
+        clinicId: form.clinicId || this.clinicId,
+      },
     };
 
-    console.log('🚀 Sending Validated Payload:', payload);
+    console.log('Sending Payload to Spring Boot:', payload);
 
+    this.isLoading = true;
     this.authService.bookAppointmentRegistration(payload).subscribe({
       next: (res) => {
-        Swal.fire('Success', 'Appointment Booked 🎉', 'success');
-        this.router.navigate(['/']);
+        this.isLoading = false;
+        Swal.fire(
+          'Success',
+          'Appointment Booked & Notification Sent! 🎉',
+          'success'
+        );
+        this.router.navigate(['/patient']);
       },
       error: (err) => {
-        const errorMsg =
-          err.error?.message ||
-          'Server Error (500). Please check if all fields are filled.';
-        Swal.fire('Booking Failed', errorMsg, 'error');
+        this.isLoading = false;
+        console.error('Server Error:', err);
+        Swal.fire(
+          'Error',
+          err.error?.message || 'Server Error: Check if IDs are valid',
+          'error'
+        );
       },
     });
   }
+
   loadAllAppointments(): void {
     this.isLoading = true;
-
-    console.log('Data Loading Start:');
     this.authService.findAllAppointments().subscribe({
       next: (data) => {
         this.appointmentsList = data;
         this.applyFilters();
         this.isLoading = false;
       },
-      error: (err) => {
-        console.error('Fetch failed', err);
+      error: () => {
         this.isLoading = false;
-        Swal.fire('Error', 'Could not load appointments', 'error');
       },
     });
   }
 
-  getPageNumbers(): number[] {
-    const total = this.totalPages;
-    const current = this.currentPage;
-    const delta = 2; // pages to show on each side of current
-
-    if (total <= 7) {
-      // show all pages when few
-      return Array.from({ length: total }, (_, i) => i + 1);
-    }
-
-    const pages: number[] = [];
-    const left = Math.max(2, current - delta);
-    const right = Math.min(total - 1, current + delta);
-
-    pages.push(1);
-    if (left > 2) pages.push(-1); // left ellipsis
-    for (let i = left; i <= right; i++) pages.push(i);
-    if (right < total - 1) pages.push(-1); // right ellipsis
-    pages.push(total);
-
-    return pages;
-  }
-  getAvatarColor(name: string): string {
-    const colors = [
-      'linear-gradient(135deg, #4F46E5, #06B6D4)',
-      'linear-gradient(135deg, #7C3AED, #EC4899)',
-      'linear-gradient(135deg, #059669, #06B6D4)',
-      'linear-gradient(135deg, #D97706, #EF4444)',
-      'linear-gradient(135deg, #2563EB, #7C3AED)',
-      'linear-gradient(135deg, #0891B2, #10B981)',
-    ];
-    if (!name) return colors[0];
-    const idx = name.charCodeAt(0) % colors.length;
-    return colors[idx];
-  }
-
   applyFilters(): void {
     let result = [...this.appointmentsList];
-
     if (this.filterName.trim()) {
-      const name = this.filterName.trim().toLowerCase();
       result = result.filter((a) =>
-        a.patientName?.toLowerCase().includes(name)
+        a.patientName?.toLowerCase().includes(this.filterName.toLowerCase())
       );
     }
-
-    if (this.filterDate) {
+    if (this.filterDate)
       result = result.filter((a) => a.appointmentDate === this.filterDate);
-    }
-
-    if (this.filterType) {
-      result = result.filter(
-        (a) =>
-          a.appointmentType?.toLowerCase() === this.filterType.toLowerCase()
-      );
-    }
-
-    if (this.filterStatus) {
-      result = result.filter(
-        (a) => a.status?.toUpperCase() === this.filterStatus.toUpperCase()
-      );
-    }
+    if (this.filterType)
+      result = result.filter((a) => a.appointmentType === this.filterType);
+    if (this.filterStatus)
+      result = result.filter((a) => a.status === this.filterStatus);
 
     this.filteredList = result;
-    this.currentPage = 1;
-    this.updatePagination();
-  }
-
-  onPageSizeChange(): void {
-    this.currentPage = 1;
     this.updatePagination();
   }
 
   updatePagination(): void {
-    this.totalPages = Math.max(
-      1,
-      Math.ceil(this.filteredList.length / this.pageSize)
-    );
-    if (this.currentPage > this.totalPages) {
-      this.currentPage = this.totalPages;
-    }
+    this.totalPages = Math.ceil(this.filteredList.length / this.pageSize) || 1;
     const start = (this.currentPage - 1) * this.pageSize;
-    const end = start + this.pageSize;
-    this.pagedList = this.filteredList.slice(start, end);
+    this.pagedList = this.filteredList.slice(start, start + this.pageSize);
   }
-
-  goToPage(page: number): void {
-    if (page < 1 || page > this.totalPages) return;
-    this.currentPage = page;
+  goToPage(p: number) {
+    this.currentPage = p;
     this.updatePagination();
   }
-  hasActiveFilters(): boolean {
-    return !!(
+  onPageSizeChange() {
+    this.currentPage = 1;
+    this.updatePagination();
+  }
+  hasActiveFilters = () =>
+    !!(
       this.filterName ||
       this.filterDate ||
       this.filterType ||
       this.filterStatus
     );
-  }
-
-  clearAllFilters(): void {
+  clearAllFilters() {
     this.filterName = '';
     this.filterDate = '';
     this.filterType = '';
     this.filterStatus = '';
-    this.filteredList = [...this.appointmentsList];
+    this.applyFilters();
   }
-
   goBack(): void {
     this.location.back();
   }
+  getAvatarColor(name: string): string {
+    return 'linear-gradient(135deg, #4F46E5, #06B6D4)';
+  }
+  getPageNumbers = () =>
+    Array.from({ length: this.totalPages }, (_, i) => i + 1);
 }

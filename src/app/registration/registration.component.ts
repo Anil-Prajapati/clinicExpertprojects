@@ -19,6 +19,8 @@ export class RegistrationComponent implements OnInit {
   showPassword = false;
   showConfirmPassword = false;
   isLoading = false;
+  clinics: any[] = [];
+  selectedClinicId: string = '';
 
   registerData: any = {
     clinicCode: '', // Naya field
@@ -50,6 +52,7 @@ export class RegistrationComponent implements OnInit {
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.loadParticles();
+      this.loadClinics();
     }
   }
 
@@ -121,12 +124,20 @@ export class RegistrationComponent implements OnInit {
         patientStatus: 'ACTIVE',
       };
 
+      console.log("Selected Clinic ID:", this.selectedClinicId);
       console.log('Patient PayLoad', patientPayload);
-      this.authService.registerPatient(patientPayload).subscribe({
+      this.authService.registerPatient(patientPayload,this.selectedClinicId).subscribe({
         next: () => this.handleSuccess(),
         error: (err) => this.handleError(err),
       });
     }
+  }
+
+  loadClinics(){
+    this.authService.getAllClinic().subscribe((data:any) => {
+      this.clinics = data;
+      console.log(this.clinics);
+    });
   }
   validateRegistration(): boolean {
     const data = this.registerData;

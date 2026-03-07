@@ -14,7 +14,7 @@ export class AuthService {
   private storageKeys = ['token','access_token','userRole','loginName','doctorSpecilization','doctorId'];
   login(payload: any) {return this.http.post<any>(`${this.baseURL}/auth/login`, payload);}
   registerClinic(payload: any): Observable<any> {return this.http.post<any>(`${this.baseURL}/registration`, payload);}
-  registerPatient(payload: any): Observable<any> {const clinicId = '69987a37-2e55-4e62-96d9-66e04e2f48ed';const url = `${this.baseURL}/patients/clinic/${clinicId}/patients`;return this.http.post<any>(url, payload);}
+  registerPatient(payload: any, clinicId:string): Observable<any> {const url = `${this.baseURL}/patients/clinic/${clinicId}/patients`;return this.http.post<any>(url, payload);}
   getDoctorList(){const token = this.tokenService.getToken(); const headers = new HttpHeaders({'Authorization': `Bearer ${token}`}); return this.http.get<any>(`${this.baseURL}/doctor/list`,{ headers })}
   bookAppointmentRegistration(payload: any): Observable<any> {const token = this.tokenService.getToken();const headers = token? new HttpHeaders({ Authorization: `Bearer ${token}` }): undefined;return this.http.post<any>(`${this.baseURL}/user/appointment`, payload, { headers });}
   logout() {this.storageKeys.forEach((key) => localStorage.removeItem(key)); this.tokenService.clearToken();}
@@ -29,8 +29,13 @@ export class AuthService {
   findAllAppointments(): Observable<any[]> {return this.http.get<any[]>(`${this.baseURL}/user/all/appointment`,{headers: this.getAuthHeaders()});}
   updateDoctor(id: string, doctorData: any): Observable<any> {return this.http.put<any>(`${this.baseURL}/update/${id}`, doctorData, { headers: this.getAuthHeaders() });}
   deleteDoctor(id: string): Observable<any> {return this.http.delete<any>(`${this.baseURL}/delete/${id}`, { headers: this.getAuthHeaders() });}
-  addDoctor(doctorData: any): Observable<any> {return this.http.post<any>(`${this.baseURL}/add/doctor`, doctorData, { headers: this.getAuthHeaders() });}
-  getAllPatient():Observable<any>{
-    return this.http.get<any>(`${this.baseURL}/patients/all`,{headers:this.getAuthHeaders()})
-  }
+  addDoctor(doctorData: any, clinicId:string): Observable<any> {
+  return this.http.post<any>(
+    `${this.baseURL}/${clinicId}/doctor`,
+    doctorData,
+    { headers: this.getAuthHeaders() }
+  );
+}
+  getAllPatient():Observable<any>{return this.http.get<any>(`${this.baseURL}/patients/all`,{headers:this.getAuthHeaders()})}
+  getAllClinic(){return this.http.get(`${this.baseURL}/all/clinic`)}
 }

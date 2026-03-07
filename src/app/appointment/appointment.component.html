@@ -299,6 +299,20 @@
             <p class="text-muted small">Fill out the form to secure your slot instantly.</p>
           </div>
           <form [formGroup]="appointmentForm" (ngSubmit)="submit()">
+              <div class="mb-3">
+    <label class="modern-label">Clinic ID</label>
+    <input type="text" class="modern-input" formControlName="clinicId" readonly>
+  </div>
+
+  <div class="mb-3">
+    <label class="modern-label">Patient ID</label>
+    <input type="text" class="modern-input" formControlName="patientId" readonly>
+  </div>
+
+  <div class="mb-3">
+    <label class="modern-label">Doctor ID</label>
+    <input type="text" class="modern-input" formControlName="doctorId" readonly>
+  </div>
             <div class="mb-4">
               <label class="modern-label">Patient Name</label>
               <input formControlName="patientName" class="modern-input" placeholder="Enter full name">
@@ -318,9 +332,9 @@
               </div>
             </div>
             <div class="mb-4">
-              <label class="modern-label">Doctor</label>
-              <input type="text" class="modern-input" [value]="doctorName" readonly />
-            </div>
+  <label class="modern-label">Doctor Name</label>
+  <input type="text" class="modern-input" [value]="doctorName" readonly />
+</div>
             <div class="row">
               <div class="col-md-4 mb-4">
                 <label class="modern-label">Date</label>
@@ -341,7 +355,7 @@
               <input type="radio" formControlName="appointmentType" value="Follow-Up" id="followV">
               <label for="followV" class="toggle-btn">Follow-Up</label>
             </div>
-            <button type="submit" class="modern-btn" [disabled]="appointmentForm.invalid">
+            <button type="submit" class="modern-btn">
               <span>Confirm Booking</span>
               <span class="arrow">→</span>
             </button>

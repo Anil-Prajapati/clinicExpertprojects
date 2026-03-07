@@ -248,7 +248,7 @@ html { scroll-behavior: smooth; }
 /* Doctor Table */
 .doctor-table { width: 100%; border-collapse: collapse; min-width: 850px; font-family: 'DM Sans', sans-serif; }
 .doctor-table thead tr { background: linear-gradient(135deg, rgba(0, 242, 254, 0.12), rgba(79, 172, 254, 0.06)); border-bottom: 1px solid rgba(0, 242, 254, 0.15); }
-.doctor-table thead th { font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: #4a7a8a; padding: 16px 18px; white-space: nowrap; }
+.doctor-table thead th { font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: #ffffff;font-weight: bold; padding: 16px 18px; white-space: nowrap; }
 .doctor-table thead th.th-num { width: 50px; text-align: center; }
 .doctor-table thead th.th-actions { text-align: center; }
 .doctor-table tbody tr.table-row { border-bottom: 1px solid rgba(0, 242, 254, 0.05); transition: background 0.18s; animation: rowSlide 0.35s ease both; }

@@ -71,6 +71,7 @@ export class AppointmentComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.initForm('', '');
     if (isPlatformBrowser(this.platformId)) {
       this.role = localStorage.getItem('userRole');
       const today = new Date();

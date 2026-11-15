@@ -1,0 +1,10 @@
+
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "clinicexpertprojects",
+  "compatibility_date": "2026-11-15",
+  "assets": {
+    "directory": "./dist/clinic-expret/browser",
+    "not_found_handling": "single-page-application"
+  }
+}
